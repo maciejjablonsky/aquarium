@@ -52,11 +52,7 @@ void fish_display(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_textur
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     long double a_angle = fabsl(angle);
 
-    if (0 <= a_angle && a_angle < 90)
-    {
-        flip = SDL_FLIP_NONE;
-    }
-    else if (90 <= a_angle && a_angle < 180)
+    if (90 <= a_angle && a_angle < 180)
     {
         flip = SDL_FLIP_VERTICAL;
     }
