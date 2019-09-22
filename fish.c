@@ -19,7 +19,7 @@ fish_t *fish_create(size_t max_width, size_t max_height)
     new_fish->coords.x = rand() % max_width;
     new_fish->coords.y = rand() % max_height;
     new_fish->v.r = INITIAL_FISH_VELOCITY;
-    new_fish->v.x = INITIAL_FISH_VELOCITY * ((double) rand() / RAND_MAX);
+    new_fish->v.x = INITIAL_FISH_VELOCITY * ((long double) rand() / RAND_MAX);
     long double r = new_fish->v.r;
     long double x = new_fish->v.x;
     new_fish->v.y = sqrtl(r * r - x * x);
