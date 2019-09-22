@@ -40,6 +40,7 @@ fish_t *fish_create(size_t max_width, size_t max_height)
 void *fish_kill(fish_t *fish)
 {
     free(fish);
+    return NULL;
 }
 
 void fish_display(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle)
