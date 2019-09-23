@@ -36,7 +36,7 @@ typedef struct fish
 #define MIN_FISH_TO_FISH_DISTANCE 30 // e.g. cm
 #define MAX_FRIENDS_NUMBER 6
 #define FISH_REACTION_RADIUS 100
-#define INITIAL_FISH_VELOCITY 160
+#define INITIAL_FISH_VELOCITY 200
 
 fish_t *fish_create(size_t max_width, size_t max_height);
 

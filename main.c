@@ -14,7 +14,7 @@ typedef enum
 } bool;
 #endif
 
-#define FISH_NUMBER 70
+#define FISH_NUMBER 200
 #define BOUNCE_RADIUS 10
 
 void *fish_destructor(void *item)
@@ -57,7 +57,7 @@ int main(void)
     SDL_Texture *background = IMG_LoadTexture(renderer, "background.png");
 
     SDL_Texture *fish_texture = IMG_LoadTexture(renderer, "pink_fish.png");
-    SDL_Rect fish_rectangle = {0, 0, (50 * 1.641025641), 50};
+    SDL_Rect fish_rectangle = {0, 0, (30 * 1.641025641), 30};
 
 
     sl_list_t *fish_list = SL_LIST_create(sizeof(fish_t), fish_destructor);
@@ -69,6 +69,11 @@ int main(void)
     bool quit = false;
     long double global_delta = 0;
     long long delta_count = 0;
+    long double global_time = 0;
+    long double fps_timer, fps;
+    fps_timer = 0;
+    fps = 0;
+    int frames = 0;
     get_delta_time();
     while (!quit)
     {
@@ -88,10 +93,20 @@ int main(void)
 
         long double delta = get_delta_time();
         global_delta += delta;
+        global_time += delta;
         delta_count++;
         long double average_delta = global_delta / delta_count;
 
-        printf("delta = %.12Lf | average delta = %.12Lf | iteration = %lld\n", delta, average_delta, delta_count);
+        fps_timer += delta;
+        if (fps_timer > 0.5)
+        {
+            fps = frames * 2;
+            frames = 0;
+            fps_timer -= 0.5;
+        }
+
+        printf("delta = %.12Lf | average delta = %.12Lf | iteration = %lld | fps = %Lf\n", delta, average_delta,
+               delta_count, fps);
         for (size_t i = 0; i < SL_LIST_size(fish_list); ++i)
         {
             fish_t *fish = SL_LIST_item_at(fish_list, i);
@@ -133,6 +148,8 @@ int main(void)
 
 
         SDL_RenderPresent(renderer);
+
+        frames++;
 
 
     }
