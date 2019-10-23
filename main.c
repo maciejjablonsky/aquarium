@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "fish.h"
-#include "sl_list.h"
+#include "dl_list.h"
 #include <stdio.h>
 
 
@@ -14,7 +14,7 @@ typedef enum
 } bool;
 #endif
 
-#define FISH_NUMBER 200
+#define FISH_NUMBER 100
 #define BOUNCE_RADIUS 10
 
 void *fish_destructor(void *item)
@@ -41,7 +41,7 @@ int main(void)
     SDL_Rect window_rect = {50, 50, 1080, 720};
     SDL_Init(SDL_INIT_VIDEO);
     if ((window = SDL_CreateWindow("Aquarium", window_rect.x, window_rect.y, window_rect.w, window_rect.h,
-                                   SDL_WINDOW_RESIZABLE)) == NULL)
+                                   SDL_WINDOW_FULLSCREEN_DESKTOP)) == NULL)
     {
         exit(1);
     }
@@ -51,20 +51,22 @@ int main(void)
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_GetWindowSize(window, &window_rect.w, &window_rect.h);
     SDL_RenderSetLogicalSize(renderer, window_rect.w, window_rect.h);
     SDL_SetRenderDrawColor(renderer, 102, 204, 255, 255);
+
 
     SDL_Texture *background = IMG_LoadTexture(renderer, "background.png");
 
     SDL_Texture *fish_texture = IMG_LoadTexture(renderer, "pink_fish.png");
-    SDL_Rect fish_rectangle = {0, 0, (30 * 1.641025641), 30};
+    size_t fish_scale = 30;
+    SDL_Rect fish_rectangle = {0, 0, (fish_scale * 1.641025641), fish_scale};
 
 
-    sl_list_t *fish_list = SL_LIST_create(sizeof(fish_t), fish_destructor);
+    dl_list_t *fish_list = DL_LIST_create(sizeof(fish_t), DL_COPY_POINTER, fish_destructor);
     for (size_t i = 0; i < FISH_NUMBER; ++i)
     {
-        SL_LIST_add_item(fish_list, fish_create(window_rect.w - fish_rectangle.w, window_rect.h - fish_rectangle.h),
-                         COPY_POINTER);
+        DL_LIST_add_item(fish_list, fish_create(window_rect.w - fish_rectangle.w, window_rect.h - fish_rectangle.h));
     }
     bool quit = false;
     long double global_delta = 0;
@@ -80,10 +82,40 @@ int main(void)
         SDL_Event event;
         while (SDL_PollEvent(&event) > 0)
         {
-            if (event.type == SDL_QUIT)
+            switch (event.type)
             {
-                quit = true;
+                case SDL_QUIT:quit = true;
+                    break;
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym)
+                    {
+                        case SDLK_ESCAPE:quit = true;
+                            break;
+                        case SDLK_UP:
+                            for (size_t i = 0; i < FISH_NUMBER; ++i)
+                            {
+                                fish_t *fish = DL_LIST_item_at(fish_list, i);
+#define VELOCITY_FACTOR 1.2
+                                fish->v.x *= VELOCITY_FACTOR;
+                                fish->v.y *= VELOCITY_FACTOR;
+#undef VELOCITY_FACTOR
+                            }
+                            break;
+                        case SDLK_DOWN:
+                            for (size_t i = 0; i < FISH_NUMBER; ++i)
+                            {
+                                fish_t *fish = DL_LIST_item_at(fish_list, i);
+#define VELOCITY_FACTOR 0.8
+                                fish->v.x *= VELOCITY_FACTOR;
+                                fish->v.y *= VELOCITY_FACTOR;
+#undef VELOCITY_FACTOR
+                            }
+
+
+                    }
+                    break;
             }
+
         }
         SDL_GetWindowSize(window, &window_rect.w, &window_rect.h);
         SDL_RenderSetLogicalSize(renderer, window_rect.w, window_rect.h);
@@ -107,9 +139,11 @@ int main(void)
 
         printf("delta = %.12Lf | average delta = %.12Lf | iteration = %lld | fps = %Lf\n", delta, average_delta,
                delta_count, fps);
-        for (size_t i = 0; i < SL_LIST_size(fish_list); ++i)
+
+        double angle = 0;
+        for (size_t i = 0; i < DL_LIST_size(fish_list); ++i)
         {
-            fish_t *fish = SL_LIST_item_at(fish_list, i);
+            fish_t *fish = DL_LIST_item_at(fish_list, i);
 
             if (fish->changing_direction_x == false &&
                 (fish->coords.x < BOUNCE_RADIUS || fish->coords.x + fish_rectangle.w > window_rect.w - BOUNCE_RADIUS))
@@ -137,11 +171,11 @@ int main(void)
                 fish->changing_direction_y = false;
             }
 
-
+            angle += delta;
             fish->coords.x += fish->v.x * delta;
             fish->coords.y += fish->v.y * delta;
-            fish_rectangle.x = (int) fish->coords.x % window_rect.w;
-            fish_rectangle.y = (int) fish->coords.y % window_rect.h;
+            fish_rectangle.x = (int) fish->coords.x;
+            fish_rectangle.y = (int) fish->coords.y;
 
             fish_display(renderer, fish, fish_texture, &fish_rectangle);
         }
@@ -154,7 +188,7 @@ int main(void)
 
     }
 
-    SL_LIST_delete_list(fish_list);
+    DL_LIST_delete(fish_list);
     SDL_DestroyTexture(fish_texture);
     SDL_DestroyTexture(background);
     SDL_DestroyRenderer(renderer);
