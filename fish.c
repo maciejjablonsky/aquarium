@@ -6,7 +6,7 @@
 #include <math.h>
 
 
-fish_t *fish_create(size_t max_width, size_t max_height)
+fish_t *fish_create(size_t max_width, size_t max_height, size_t border)
 {
     fish_t *new_fish = malloc(sizeof(fish_t));
     if (new_fish == NULL)
@@ -15,9 +15,8 @@ fish_t *fish_create(size_t max_width, size_t max_height)
     }
 
     new_fish->friends = 0;
-
-    new_fish->coords.x = rand() % max_width;
-    new_fish->coords.y = rand() % max_height;
+    new_fish->coords.x = rand() % (max_width - 2 * border) + border;
+    new_fish->coords.y = rand() % (max_height - 2 * border) + border;
     new_fish->v.r = INITIAL_FISH_VELOCITY;
     new_fish->v.x = INITIAL_FISH_VELOCITY * ((long double) rand() / RAND_MAX);
     long double r = new_fish->v.r;

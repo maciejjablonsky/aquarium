@@ -14,8 +14,10 @@ typedef enum
 } bool;
 #endif
 
-#define FISH_NUMBER 100
-#define BOUNCE_RADIUS 10
+#define FISH_NUMBER 5000
+#define BOUNCE_RADIUS 200
+#define FISH_SCALE 5
+
 
 void *fish_destructor(void *item)
 {
@@ -59,14 +61,15 @@ int main(void)
     SDL_Texture *background = IMG_LoadTexture(renderer, "background.png");
 
     SDL_Texture *fish_texture = IMG_LoadTexture(renderer, "pink_fish.png");
-    size_t fish_scale = 30;
+    size_t fish_scale = FISH_SCALE;
     SDL_Rect fish_rectangle = {0, 0, (fish_scale * 1.641025641), fish_scale};
 
 
     dl_list_t *fish_list = DL_LIST_create(sizeof(fish_t), DL_COPY_POINTER, fish_destructor);
     for (size_t i = 0; i < FISH_NUMBER; ++i)
     {
-        DL_LIST_add_item(fish_list, fish_create(window_rect.w - fish_rectangle.w, window_rect.h - fish_rectangle.h));
+        DL_LIST_add_item(fish_list, fish_create(window_rect.w - fish_rectangle.w, window_rect.h - fish_rectangle.h,
+                                                BOUNCE_RADIUS));
     }
     bool quit = false;
     long double global_delta = 0;
@@ -110,7 +113,8 @@ int main(void)
                                 fish->v.y *= VELOCITY_FACTOR;
 #undef VELOCITY_FACTOR
                             }
-
+                            break;
+                        default:break;
 
                     }
                     break;

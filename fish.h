@@ -38,7 +38,7 @@ typedef struct fish
 #define FISH_REACTION_RADIUS 100
 #define INITIAL_FISH_VELOCITY 200
 
-fish_t *fish_create(size_t max_width, size_t max_height);
+fish_t *fish_create(size_t max_width, size_t max_height, size_t border);
 
 void *fish_kill(fish_t *fish);
 
