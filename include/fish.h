@@ -8,8 +8,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
-#include "cartesian_point.h"
-#include "cartesian_velocity.h"
+#include "include/cartesian_point.h"
+#include "include/cartesian_velocity.h"
 #include "polar_velocity.h"
 #include "harmonic_movement.h"
 #include "time_handler.h"
