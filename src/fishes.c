@@ -2,11 +2,11 @@
 // Created by foreverhungry on 13.02.2020.
 //
 
-#include "fishes.h"
-#include "fish.h"
-#include "object.h"
-#include "time_handler.h"
-#include "wall.h"
+#include "../include/fishes.h"
+#include "../include/fish.h"
+#include "../include/object.h"
+#include "../include/time_handler.h"
+#include "../include/wall.h"
 
 
 

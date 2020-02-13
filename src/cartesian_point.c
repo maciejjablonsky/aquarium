@@ -2,9 +2,9 @@
 // Created by foreverhungry on 13.02.2020.
 //
 
-#include "cartesian_point.h"
+#include "../include/cartesian_point.h"
 #include "math.h"
-#include "object.h"
+#include "../include/object.h"
 #include <stdlib.h>
 #include <stdio.h>
 

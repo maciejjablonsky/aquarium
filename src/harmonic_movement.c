@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include "harmonic_movement.h"
+#include "../include/harmonic_movement.h"
 #include <math.h>
 
 harmonic_movement_t *create_harmonic_movement(long double amplitude, long double period, long double init_phase,

@@ -5,7 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <time.h>
 #include <SDL2/SDL.h>
-#include "aquarium.h"
+#include "../include/aquarium.h"
+#include "../include/graphics_paths.h"
 
 void set_display_initial_data(display_initial_data_t *data);
 
@@ -36,8 +37,8 @@ void set_display_initial_data(display_initial_data_t *data) {
     strcpy(data->window_name, "Aquarium");
     data->window_flags = SDL_WINDOW_RESIZABLE;
     data->renderer_flags = SDL_RENDERER_ACCELERATED;
-    strcpy(data->background_image_filename, "background.png");
-    strcpy(data->fish_image_filename, "pink_fish.png");
+    strcpy(data->background_image_filename, BACKGROUND_IMAGE_PATH);
+    strcpy(data->fish_image_filename, FISH_IMAGE_PATH);
 }
 
 void set_fishes_initial_data(fishes_initial_data_t *data) {

@@ -3,10 +3,10 @@
 //
 
 
-#include "fish.h"
-#include "object.h"
-#include "wall.h"
-#include "time_handler.h"
+#include "../include/fish.h"
+#include "../include/object.h"
+#include "../include/wall.h"
+#include "../include/time_handler.h"
 #include <math.h>
 
 #define to_radians(degrees) ((degrees) * M_PI / 180)

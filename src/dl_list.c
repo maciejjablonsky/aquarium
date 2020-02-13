@@ -2,7 +2,7 @@
 // Created by maciek on 01.10.19.
 //
 
-#include "dl_list.h"
+#include "../include/dl_list.h"
 #include <stdlib.h>
 #include <memory.h>
 #include <assert.h>

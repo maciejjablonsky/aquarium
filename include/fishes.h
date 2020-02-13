@@ -8,9 +8,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <SDL2/SDL_rect.h>
-#include "include/dl_list.h"
+#include "dl_list.h"
 #include "time_handler.h"
-#include "include/cartesian_point.h"
+#include "cartesian_point.h"
 
 typedef struct {
     SDL_Rect fish_dimensions;

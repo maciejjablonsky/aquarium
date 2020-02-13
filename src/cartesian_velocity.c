@@ -3,8 +3,8 @@
 //
 
 #include <stdio.h>
-#include "cartesian_velocity.h"
-#include "object.h"
+#include "../include/cartesian_velocity.h"
+#include "../include/object.h"
 #include <math.h>
 cartesian_velocity_t *create_cartesian_velocity(long double r, long double x, long double y) {
     cartesian_velocity_t * this = create_object(sizeof(cartesian_velocity_t));

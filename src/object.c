@@ -2,7 +2,7 @@
 // Created by foreverhungry on 13.02.2020.
 //
 
-#include "object.h"
+#include "../include/object.h"
 #include <stddef.h>
 #include <stdlib.h>
 

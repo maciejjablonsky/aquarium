@@ -3,9 +3,9 @@
 //
 
 #include <SDL2/SDL_events.h>
-#include "aquarium.h"
-#include "object.h"
-#include "cartesian_point.h"
+#include "../include/aquarium.h"
+#include "../include/object.h"
+#include "../include/cartesian_point.h"
 
 
 
