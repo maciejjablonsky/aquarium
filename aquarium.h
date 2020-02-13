@@ -8,6 +8,7 @@
 #include "fishes.h"
 #include "time_handler.h"
 #include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_events.h>
 
 typedef struct  {
     display_t * display;

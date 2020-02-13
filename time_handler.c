@@ -27,7 +27,7 @@ void reset_time_handler(time_handler_t *handler) {
 }
 
 void update_time_handler(time_handler_t *handler) {
-    static prev_ticks = 0;
+    static Uint32 prev_ticks = 0;
     Uint32 next_ticks = SDL_GetTicks();
     handler->dtime = (next_ticks - prev_ticks) * 0.001;
     prev_ticks = next_ticks;

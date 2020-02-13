@@ -8,10 +8,10 @@
 #include "time_handler.h"
 #include "wall.h"
 
-void *fish_destructor(void *item);
+
 
 fishes_t *create_fishes(fishes_initial_data_t *fishes_initial_data, size_t amount_of_fishes) {
-    fishes_t *this = DL_LIST_create(sizeof(fish_t), DL_COPY_POINTER, destroy_fish);
+    fishes_t *this = DL_LIST_create(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *))destroy_fish);
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create fishes.\n");
         exit(1);
@@ -29,11 +29,6 @@ fishes_t *create_fishes(fishes_initial_data_t *fishes_initial_data, size_t amoun
         DL_LIST_add_item(this, new_fish);
     }
     return this;
-}
-
-// wrapper for DL_LIST
-void *fish_destructor(void *item) {
-    return destroy_fish(item);
 }
 
 void move_each_fish_in_aquarium(fishes_t *fishes, time_handler_t *clock, cartesian_point_t aquarium_dimensions) {

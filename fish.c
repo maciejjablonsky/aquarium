@@ -2,7 +2,6 @@
 // Created by maciek on 20.09.19.
 //
 
-#define _USE_MATH_DEFINES
 
 #include "fish.h"
 #include "object.h"

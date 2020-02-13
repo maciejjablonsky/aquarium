@@ -2,6 +2,7 @@
 // Created by foreverhungry on 13.02.2020.
 //
 
+#define _USE_MATH_DEFINES
 #include <time.h>
 #include <SDL2/SDL.h>
 #include "aquarium.h"
