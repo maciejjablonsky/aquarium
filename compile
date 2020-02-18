@@ -1,0 +1,6 @@
+#!/bin/bash
+
+IS_DEBUG=$1
+
+gcc $DEBUG -o aquarium src/* -lSDL2 -lSDL2_image -lm 
+

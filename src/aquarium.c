@@ -3,9 +3,9 @@
 //
 
 #include <SDL2/SDL_events.h>
-#include "../include/aquarium.h"
-#include "../include/object.h"
-#include "../include/cartesian_point.h"
+#include "aquarium.h"
+#include "object.h"
+#include "cartesian_point.h"
 
 
 
@@ -39,6 +39,7 @@ aquarium_t *destroy_aquarium(aquarium_t *this) {
 void run_aquarium(aquarium_t *aquarium) {
     reset_time_handler(aquarium->clock);
     start_action(aquarium);
+    update_time_handler(aquarium->clock);
     while (is_aquarium_running(aquarium)) {
         handle_events(aquarium);
         update_time_handler(aquarium->clock);

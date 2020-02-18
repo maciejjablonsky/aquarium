@@ -3,14 +3,17 @@
 //
 
 
-#include "../include/fish.h"
-#include "../include/object.h"
-#include "../include/wall.h"
-#include "../include/time_handler.h"
+#include "fish.h"
+#include "object.h"
+#include "wall.h"
+#include "time_handler.h"
+#include "degrees.h"
+#include "random.h"
 #include <math.h>
 
 #define to_radians(degrees) ((degrees) * M_PI / 180)
 #define to_degrees(radians) ((radians) * 180 / M_PI)
+
 
 fish_t *create_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period) {
@@ -20,21 +23,31 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
         return NULL;
     }
 
-    this->coords = create_cartesian_point((int) (rand() * max_x / RAND_MAX),
-                                          (int) (rand() * max_y / RAND_MAX));
-    long double angle = to_radians(((long double) rand() / RAND_MAX) * 360);
-    this->polar_velocity = create_polar_velocity(initial_translational_velocity, angle, angle);
-    this->cartesian_velocity = create_cartesian_velocity(initial_translational_velocity,
-                                                         this->polar_velocity->r * cosl(this->polar_velocity->angle),
-                                                         this->polar_velocity->r * sinl
-                                                                 (this->polar_velocity->angle));
-    this->wave = create_harmonic_movement(wave_amplitude, wave_period,
-                                          to_radians(((long double) rand() / RAND_MAX) * 360),
-                                          this->polar_velocity->angle);
+    long double x_0 = ldrandom_range(0, max_x);
+    long double y_0 = ldrandom_range(0, max_y);
+    this->coords = create_cartesian_point(x_0, y_0);
+
+
+    long double translational_angle = ldto_radians(ldrandom_range(0, 360));
+
+    long double v_x = initial_translational_velocity * cosl(translational_angle);
+    long double v_y = initial_translational_velocity * sinl(translational_angle);
+
+
+    this->translational_motion = create_translational_motion(x_0, y_0,
+                                                             initial_translational_velocity, translational_angle,
+                                                             translational_angle);
+    long double harmonic_angle = translational_angle + M_PI / 2;
+    this->harmonic_motion = create_harmonic_motion(wave_amplitude, wave_period,
+                                                   ldto_radians(ldrandom_range(0, 360)),
+                                                   harmonic_angle);
+
+    this->general_velocity = create_cartesian_velocity(0, 0);
     this->dimensions = dimensions;
 
-    if (is_not_created(this->coords) || is_not_created(this->polar_velocity) || is_not_created
-            (this->cartesian_velocity) || is_not_created(this->wave)) {
+    if (is_not_created(this->coords) || is_not_created(this->translational_motion) || is_not_created
+            (this->harmonic_motion) ||
+        is_not_created(this->general_velocity)) {
         return NULL;
     }
     return this;
@@ -42,49 +55,50 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
 
 
 fish_t *destroy_fish(fish_t *this) {
-    this->cartesian_velocity = destroy_cartesian_velocity(this->cartesian_velocity);
-    this->polar_velocity = destroy_polar_velocity(this->polar_velocity);
     this->coords = destroy_cartesian_point(this->coords);
-    this->wave = destroy_harmonic_movement(this->wave);
+    this->general_velocity = destroy_cartesian_velocity(this->general_velocity);
+    this->harmonic_motion = destroy_harmonic_motion(this->harmonic_motion);
+    this->translational_motion = destroy_translational_motion((this->translational_motion));
 
-    if (is_destroyed(this->cartesian_velocity) && is_destroyed(this->polar_velocity) && is_destroyed(this->coords) &&
-        is_destroyed(this->wave)) {
+    if (is_destroyed(this->coords) && is_destroyed(this->general_velocity) && is_destroyed
+            (this->translational_motion) &&
+        is_destroyed(this->harmonic_motion)) {
         return destroy_object(this);
     }
     return this;
 }
 
-//void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimensions) {
-//    double angle = fish->translational_velocity_angle;
-//    int length = 60;
-//    int x = length * SDL_cos(angle) + fish->coords.x + fish_dimensions->w / 2;
-//    int y = length * SDL_sin(angle) + fish->coords.y + fish_dimensions->h / 2;
-//    SDL_RenderDrawLine(renderer, fish->coords.x + fish_dimensions->w / 2, fish->coords.y + fish_dimensions->h / 2, x,
-//                       y);
-//}
+void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimensions) {
+    long double angle_to_x_axis = fish->translational_motion->polar_v->angle;
+    long double length = 60;
+    int x = length * cosl(angle_to_x_axis) + fish->coords->x + (long double) fish_dimensions->w / 2;
+    int y = length * sinl(angle_to_x_axis) + fish->coords->y + (long double) fish_dimensions->h / 2;
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+    SDL_RenderDrawLine(renderer, fish->coords->x + fish_dimensions->w / 2, fish->coords->y + fish_dimensions->h / 2, x,
+                       y);
+}
 
 void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle) {
     SDL_Point center = {fish_rectangle->w / 2, fish_rectangle->h / 2};
-    double angle = to_degrees(atan2l(fish->cartesian_velocity->y, fish->cartesian_velocity->x));
+    long double angle = ldto_degrees(atan2l(fish->general_velocity->y, fish->general_velocity->x));
 
     SDL_RendererFlip flip = SDL_FLIP_NONE;
-    double a_angle = fabs(angle);
+    long double a_angle = fabsl(angle);
 
     if (90 <= a_angle && a_angle < 180) {
         flip = SDL_FLIP_VERTICAL;
     }
     //draw_directions(renderer, fish, fish_rectangle);
-    SDL_RenderCopyEx(renderer, fish_texture, NULL, fish_rectangle, angle, &center, flip);
+    SDL_RenderCopyEx(renderer, fish_texture, NULL, fish_rectangle, (double) angle, &center, flip);
 }
 
 
 void set_fish_velocity_value(fish_t *this, long double value) {
-    set_polar_velocity_value(this->polar_velocity, value);
-    set_cartesian_velocity_using_trig(this->cartesian_velocity, value, this->polar_velocity->angle);
+    set_translational_motion_velocity(this->translational_motion, value);
 }
 
-void multiply_fish_velocity(fish_t *this, long double multiplier) {
-    set_fish_velocity_value(this, this->polar_velocity->r * multiplier);
+void multiply_fish_translational_velocity(fish_t *this, long double multiplier) {
+    set_fish_velocity_value(this, get_translational_velocity_value(this->translational_motion) * multiplier);
 }
 
 wall_t which_wall_is_going_to_hit(fish_t *this, cartesian_point_t *aquarium_dimensions) {
@@ -101,98 +115,99 @@ wall_t which_wall_is_going_to_hit(fish_t *this, cartesian_point_t *aquarium_dime
 }
 
 bool is_going_to_hit_top_wall(fish_t *this) {
-    return this->coords->y + get_velocity_y_of(this) <= 0;
+    return this->coords->y + get_y_general_velocity(this) <= 0;
 }
 
 bool is_going_to_hit_right_wall(fish_t *this, cartesian_point_t *aquarium_dimensions) {
-    return this->coords->x + this->dimensions.w + get_velocity_x_of(this) >= aquarium_dimensions->x;
+    return this->coords->x + this->dimensions.w + get_x_general_velocity(this) >= aquarium_dimensions->x;
 }
 
 bool is_going_to_hit_bottom_wall(fish_t *this, cartesian_point_t *aquarium_dimensions) {
-    return this->coords->y + this->dimensions.h + get_velocity_y_of(this) >= aquarium_dimensions->y;
+    return this->coords->y + this->dimensions.h + get_y_general_velocity(this) >= aquarium_dimensions->y;
 }
 
 bool is_going_to_hit_left_wall(fish_t *this) {
-    return this->coords->x + get_velocity_x_of(this) <= 0;
+    return this->coords->x + get_x_general_velocity(this) <= 0;
 }
 
-void update_velocity_x_of(fish_t *this, time_handler_t *clock) {
-    this->cartesian_velocity->x = get_translational_velocity_x_of(this, clock->dtime) + get_harmonic_velocity_x_of(this,
-                                                                                                                   clock->global);
+void update_delta_general_velocity(fish_t *this, time_handler_t *clock) {
+    update_translational_motion(this->translational_motion, clock->dtime);
+    update_harmonic_motion(this->harmonic_motion, clock->dtime);
+    update_x_delta_general_velocity(this);
+    update_y_delta_general_velocity(this);
 }
 
-
-long double get_velocity_y_of(fish_t *this) {
-    return this->cartesian_velocity->y;
+void update_x_delta_general_velocity(fish_t *this) {
+    this->general_velocity->x =
+            get_x_delta_translational_velocity(this->translational_motion) + get_x_delta_harmonic_velocity
+                    (this->harmonic_motion);
 }
 
-long double get_velocity_x_of(fish_t *this) {
-    return this->cartesian_velocity->x;
+void update_y_delta_general_velocity(fish_t *this) {
+    this->general_velocity->y =
+            get_y_delta_translational_velocity(this->translational_motion)
+            + get_y_delta_harmonic_velocity(this->harmonic_motion);
 }
 
-void update_velocity_y_of(fish_t *this, time_handler_t *clock) {
-    this->cartesian_velocity->y = get_translational_velocity_y_of(this, clock->dtime) + get_harmonic_velocity_y_of
-            (this, clock->global);
+long double get_general_velocity(fish_t *this) {
+    return sqrtl(powl(this->general_velocity->x, 2) + powl(this->general_velocity->y, 2));
 }
 
-void update_velocity_of(fish_t *this, time_handler_t *clock) {
-    update_velocity_x_of(this, clock);
-    update_velocity_y_of(this, clock);
+long double get_y_general_velocity(fish_t *this) {
+    return this->general_velocity->y;
 }
 
-long double get_translational_velocity_x_of(fish_t *this, long double dtime) {
-    return this->polar_velocity->r * cos(this->polar_velocity->angle) * dtime;
+long double get_x_general_velocity(fish_t *this) {
+    return this->general_velocity->x;
 }
 
-long double get_translational_velocity_y_of(fish_t *this, long double dtime) {
-    return this->polar_velocity->r * sin(this->polar_velocity->angle) * dtime;
-}
-
-long double get_harmonic_velocity_x_of(fish_t *this, long double global_time) {
-    return get_harmonic_velocity_x(this->wave->amplitude, get_harmonic_angular_velocity(this->wave),
-                                   this->wave->angular_velocity * global_time + this->wave->init_phase,
-                                   -(this->wave->angle_to_y_axis));
-}
-
-long double get_harmonic_velocity_y_of(fish_t *this, long double global_time) {
-    return get_harmonic_velocity_y(this->wave->amplitude, get_harmonic_angular_velocity(this->wave),
-                                   count_amplitude_phase(this->wave->angular_velocity, global_time,
-                                                         this->wave->init_phase),
-                                   -(this->wave->angle_to_y_axis));
-}
 
 bool is_going_to_hit_wall(wall_t wall) {
     return wall != NONE;
 }
 
-void dodge_wall(fish_t *this, wall_t wall_to_hit) {
+void dodge_wall(fish_t *this, wall_t wall_to_hit, time_handler_t *clock) {
     if (wall_to_hit == TOP || wall_to_hit == BOTTOM) {
         dodge_horizontal_wall(this);
     } else {
         dodge_vertical_wall(this);
     }
+    update_delta_general_velocity(this, clock);
 }
 
 void dodge_horizontal_wall(fish_t *this) {
-    long double x = this->polar_velocity->r * cosl(this->polar_velocity->angle);
-    long double y = -(this->polar_velocity->r * sinl(this->polar_velocity->angle));
-    this->polar_velocity->angle = atan2l(y, x);
+    long double x = get_x_translational_velocity(this->translational_motion);
+    long double y = -get_y_translational_velocity(this->translational_motion);
+    long double angle = atan2l(y, x);
+    set_translational_motion_angle(this->translational_motion, angle);
+    set_harmonic_motion_angle(this->harmonic_motion, angle + M_PI / 2);
+    suspend_harmonic_motion(this->harmonic_motion, count_suspend_time(this->harmonic_motion,
+                                                                      get_x_translational_velocity(
+                                                                              this->translational_motion)));
 }
 
 void dodge_vertical_wall(fish_t *this) {
-    long double x = -(this->polar_velocity->r * cosl(this->polar_velocity->angle));
-    long double y = this->polar_velocity->r * sinl(this->polar_velocity->angle);
-    this->polar_velocity->angle = atan2l(y, x);
+    long double x = -get_x_translational_velocity(this->translational_motion);
+    long double y = get_y_translational_velocity(this->translational_motion);
+    long double angle = atan2l(y, x);
+
+    set_translational_motion_angle(this->translational_motion, angle);
+    set_harmonic_motion_angle(this->harmonic_motion, angle + M_PI / 2);
+    suspend_harmonic_motion(this->harmonic_motion, count_suspend_time(this->harmonic_motion,
+                                                                      get_x_translational_velocity(
+                                                                              this->translational_motion)));
 }
 
 void update_fish_coordinates(fish_t *this) {
-    this->coords->x += get_velocity_x_of(this);
-    this->coords->y += get_velocity_y_of(this);
+    this->coords->x += get_x_general_velocity(this);
+    this->coords->y += get_y_general_velocity(this);
 }
 
 void update_fish_dimensions(fish_t *this) {
     this->dimensions.x = this->coords->x;
     this->dimensions.y = this->coords->y;
 }
+
+
 
 

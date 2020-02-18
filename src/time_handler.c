@@ -4,8 +4,8 @@
 
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
-#include "../include/time_handler.h"
-#include "../include/object.h"
+#include "time_handler.h"
+#include "object.h"
 
 time_handler_t *create_time_handler(void) {
     time_handler_t * this = create_object(sizeof(time_handler_t));

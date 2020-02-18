@@ -5,8 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <time.h>
 #include <SDL2/SDL.h>
-#include "../include/aquarium.h"
-#include "../include/graphics_paths.h"
+#include "aquarium.h"
+#include "graphics_paths.h"
 
 void set_display_initial_data(display_initial_data_t *data);
 
@@ -46,8 +46,8 @@ void set_fishes_initial_data(fishes_initial_data_t *data) {
     SDL_Rect dimensions = {0, 0, data->fish_scale * 1.641, data->fish_scale};
     data->fish_dimensions = dimensions;
     data->initial_translational_velocity = 200;
-    data->amplitude = 0.5;
-    data->wave_movement_period = 4;
+    data->amplitude = 50;
+    data->wave_movement_period = 2;
     data->max_x = AQUARIUM_WIDTH;
     data->max_y = AQUARIUM_HEIGHT;
 }

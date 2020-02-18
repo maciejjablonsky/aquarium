@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include "../include/polar_point.h"
+#include "polar_point.h"
 
 polar_point_t *create_polar_point(long double r, long double angle, long double init_phase) {
     polar_point_t * this = create_object(sizeof(polar_point_t));

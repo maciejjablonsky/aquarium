@@ -3,9 +3,9 @@
 //
 
 #include <SDL2/SDL_image.h>
-#include "../include/display.h"
-#include "../include/object.h"
-#include "../include/fish.h"
+#include "display.h"
+#include "object.h"
+#include "fish.h"
 
 static struct SDL_Window * create_window(display_initial_data_t * display_initial_data);
 static struct SDL_Renderer * create_renderer(struct SDL_Window * window, display_initial_data_t *

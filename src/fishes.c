@@ -2,11 +2,11 @@
 // Created by foreverhungry on 13.02.2020.
 //
 
-#include "../include/fishes.h"
-#include "../include/fish.h"
-#include "../include/object.h"
-#include "../include/time_handler.h"
-#include "../include/wall.h"
+#include "fishes.h"
+#include "fish.h"
+#include "object.h"
+#include "time_handler.h"
+#include "wall.h"
 
 
 
@@ -34,10 +34,10 @@ fishes_t *create_fishes(fishes_initial_data_t *fishes_initial_data, size_t amoun
 void move_each_fish_in_aquarium(fishes_t *fishes, time_handler_t *clock, cartesian_point_t aquarium_dimensions) {
     fish_t * fish = NULL;
     dl_list_foreach(fishes, fish) {
-        update_velocity_of(fish, clock);
+        update_delta_general_velocity(fish, clock);
         wall_t wall_to_hit = which_wall_is_going_to_hit(fish, &aquarium_dimensions);
         if (is_going_to_hit_wall(wall_to_hit)) {
-            dodge_wall(fish, wall_to_hit);
+            dodge_wall(fish, wall_to_hit, clock);
         }
         update_fish_coordinates(fish);
     }
@@ -51,6 +51,6 @@ void multiply_fishes_velocity(fishes_t *this, long double multiplier) {
     for (size_t i = 0; i < DL_LIST_size(this); ++i)
     {
         fish_t *fish = DL_LIST_item_at(this, i);
-        multiply_fish_velocity(fish, multiplier);
+        multiply_fish_translational_velocity(fish, multiplier);
     }
 }

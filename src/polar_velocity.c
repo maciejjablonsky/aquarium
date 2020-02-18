@@ -3,8 +3,8 @@
 //
 
 #include <stdio.h>
-#include "../include/polar_velocity.h"
-#include "../include/object.h"
+#include "polar_velocity.h"
+#include "object.h"
 
 polar_velocity_t *create_polar_velocity(long double r, long double angle, long double init_phase) {
     polar_velocity_t * this = create_object(sizeof(polar_velocity_t));
