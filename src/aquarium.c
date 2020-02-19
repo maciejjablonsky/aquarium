@@ -44,7 +44,7 @@ void run_aquarium(aquarium_t *aquarium) {
         handle_events(aquarium);
         update_time_handler(aquarium->clock);
         move_each_fish_in_aquarium(aquarium->fishes, aquarium->clock, get_aquarium_dimensions(aquarium));
-        show_aquarium_contents(aquarium->display, aquarium->fishes);
+        show_aquarium_contents(aquarium->display, aquarium->fishes, aquarium->clock);
     }
 }
 

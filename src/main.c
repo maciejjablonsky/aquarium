@@ -22,7 +22,7 @@ int main() {
     set_display_initial_data(&display_initial_data);
     fishes_initial_data_t fishes_initial_data;
     set_fishes_initial_data(&fishes_initial_data);
-    size_t amount_of_fishes = 500;
+    size_t amount_of_fishes =200;
 
     aquarium_t *aquarium = create_aquarium(&display_initial_data, &fishes_initial_data, amount_of_fishes);
     run_aquarium(aquarium);
@@ -42,12 +42,12 @@ void set_display_initial_data(display_initial_data_t *data) {
 }
 
 void set_fishes_initial_data(fishes_initial_data_t *data) {
-    data->fish_scale = 20;
+    data->fish_scale = 30;
     SDL_Rect dimensions = {0, 0, data->fish_scale * 1.641, data->fish_scale};
     data->fish_dimensions = dimensions;
     data->initial_translational_velocity = 200;
-    data->amplitude = 50;
-    data->wave_movement_period = 2;
+    data->amplitude = 5;
+    data->wave_movement_period = 1;
     data->max_x = AQUARIUM_WIDTH;
     data->max_y = AQUARIUM_HEIGHT;
 }

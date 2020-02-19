@@ -104,7 +104,7 @@ display_t *destroy_display(display_t *this) {
     return destroy_object(this);
 }
 
-void show_aquarium_contents(display_t *this, fishes_t *fishes) {
+void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock) {
     int current_width, current_height;
     SDL_GetWindowSize(this->window, &current_width, &current_height);
     SDL_RenderSetLogicalSize(this->renderer, current_width, current_height);
@@ -114,7 +114,7 @@ void show_aquarium_contents(display_t *this, fishes_t *fishes) {
     fish_t * fish = NULL;
     dl_list_foreach(fishes, fish) {
         update_fish_dimensions(fish);
-        show_fish(this->renderer, fish, this->fish_image, &fish->dimensions);
+        show_fish(this->renderer, fish, this->fish_image, &fish->dimensions, clock);
     }
     SDL_RenderPresent(this->renderer);
 }

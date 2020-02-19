@@ -23,6 +23,7 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
         return NULL;
     }
 
+    this->z_motion_phase = ldto_radians(ldrandom_range(0,360));
     long double x_0 = ldrandom_range(0, max_x);
     long double y_0 = ldrandom_range(0, max_y);
     this->coords = create_cartesian_point(x_0, y_0);
@@ -78,7 +79,14 @@ void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimens
                        y);
 }
 
-void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle) {
+long double scale_factor_fish(fish_t * fish, time_handler_t * clock) {
+    return sinl
+    (((2*M_PI)/1.25) *
+    clock->global + fish->z_motion_phase)*0.08 + 1;
+}
+
+void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle,
+               time_handler_t *clock) {
     SDL_Point center = {fish_rectangle->w / 2, fish_rectangle->h / 2};
     long double angle = ldto_degrees(atan2l(fish->general_velocity->y, fish->general_velocity->x));
 
@@ -88,8 +96,14 @@ void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, 
     if (90 <= a_angle && a_angle < 180) {
         flip = SDL_FLIP_VERTICAL;
     }
+    SDL_Rect d_dimensions = {
+            fish_rectangle->x,
+            fish_rectangle->y,
+            fish_rectangle->w * scale_factor_fish(fish, clock),
+            fish_rectangle->h * scale_factor_fish(fish, clock),
+    };
     //draw_directions(renderer, fish, fish_rectangle);
-    SDL_RenderCopyEx(renderer, fish_texture, NULL, fish_rectangle, (double) angle, &center, flip);
+    SDL_RenderCopyEx(renderer, fish_texture, NULL, &d_dimensions, (double) angle, &center, flip);
 }
 
 

@@ -2,5 +2,5 @@
 
 IS_DEBUG=$1
 
-gcc $DEBUG -o aquarium src/* -lSDL2 -lSDL2_image -lm 
+gcc $DEBUG -o aquarium src/*.{c,h} -lSDL2 -lSDL2_image -lm 
 

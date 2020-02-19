@@ -22,6 +22,7 @@ typedef struct fish {
     harmonic_motion_t *harmonic_motion;
     cartesian_point_t *coords;
     SDL_Rect dimensions;
+    long double z_motion_phase;
 } fish_t;
 
 fish_t *create_fish(size_t max_x, size_t max_y, SDL_Rect
@@ -29,7 +30,8 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
 
 fish_t *destroy_fish(fish_t *fish);
 
-void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle);
+void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle,
+               time_handler_t *clock);
 
 void set_fish_velocity_value(fish_t * this, long double value);
 

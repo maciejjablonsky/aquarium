@@ -31,7 +31,7 @@ typedef struct {
 
 display_t * create_display(display_initial_data_t * display_initial_data);
 
-void show_aquarium_contents(display_t * this, fishes_t * fishes);
+void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock);
 
 display_t * destroy_display(display_t * this);
 
