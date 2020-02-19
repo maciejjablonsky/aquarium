@@ -82,7 +82,7 @@ void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimens
 long double scale_factor_fish(fish_t * fish, time_handler_t * clock) {
     return sinl
     (((2*M_PI)/1.25) *
-    clock->global + fish->z_motion_phase)*0.08 + 1;
+    clock->global + fish->z_motion_phase)*0.02 + 1;
 }
 
 void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle,
