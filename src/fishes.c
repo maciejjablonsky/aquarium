@@ -13,7 +13,7 @@
 fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_fishes) {
     fishes_t *this = new_DL_LIST(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *)) delete_fish);
     if (is_not_created(this)) {
-        NEW_OBJECT_FAILURE("fishes_t");
+        NEW_OBJECT_FAILURE(*fishes_t);
         return NULL;
     }
 
@@ -23,7 +23,7 @@ fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_
                                 fish_initial_data->initial_translational_velocity,
                                 fish_initial_data->amplitude, fish_initial_data->wave_movement_period);
         if (is_not_created(fish)) {
-            NEW_OBJECT_FAILURE("fish_t");
+            NEW_OBJECT_FAILURE(*fish_t);
             return delete_fishes(this);
         }
         DL_LIST_add_item(this, fish);

@@ -15,15 +15,15 @@
 #if defined(DEBUG)
 #include <stdarg.h>
 
-#define NEW_OBJECT_FAILURE(TYPE_NAME) \
-        fprintf(stderr, "[FILE: %s][LINE: %d] Failed to create object (%s).\n", __FILE__, __LINE__, (TYPE_NAME))
-#define DELETE_OBJECT_FAILURE(TYPE_NAME) \
-        fprintf(stderr, "[FILE: %s][LINE: %d] Cannot delete object (%s).\n", __FILE__, __LINE__, (TYPE_NAME))
+#define NEW_OBJECT_FAILURE(TYPE) \
+        fprintf(stderr, "[FILE: %s][LINE: %d] Failed to create object ("#TYPE").\n", __FILE__, __LINE__)
+#define DELETE_OBJECT_FAILURE(TYPE) \
+        fprintf(stderr, "[FILE: %s][LINE: %d] Cannot delete object ("#TYPE").\n", __FILE__, __LINE__)
 #define IMPLICIT_ERROR_MESSAGE(...) fprintf(stderr, "[FILE: %s][LINE: %d] %s.\n", __FILE__, __LINE__, __VA_ARGS__)
 #else
 #define IMPLICIT_ERROR_MESSAGE(...)
-#define NEW_OBJECT_FAILURE(TYPE_NAME)
-#define DELETE_OBJECT_FAILURE(TYPE_NAME)
+#define NEW_OBJECT_FAILURE(TYPE)
+#define DELETE_OBJECT_FAILURE(TYPE)
 #endif
 
 void *new_object(size_t size);

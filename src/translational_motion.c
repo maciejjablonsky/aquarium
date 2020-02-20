@@ -10,13 +10,13 @@
 
 static bool is_translational_motion_created_properly(translational_motion_t *this) {
     if (is_not_created(this->polar_v)) {
-        NEW_OBJECT_FAILURE("* polar_velocity_t");
+        NEW_OBJECT_FAILURE(*polar_velocity_t);
     }
     if (is_not_created(this->cartesian_v)) {
-        NEW_OBJECT_FAILURE("* cartesian_velocity_t");
+        NEW_OBJECT_FAILURE(*cartesian_velocity_t);
     }
     if (is_not_created(this->delta_motion)) {
-        NEW_OBJECT_FAILURE("* cartesian_point");
+        NEW_OBJECT_FAILURE(*cartesian_point);
     }
     return this->polar_v && this->cartesian_v && this->delta_motion;
 }

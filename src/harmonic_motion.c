@@ -10,13 +10,13 @@
 
 static bool is_harmonic_motion_created_properly(harmonic_motion_t *this) {
     if (is_not_created(this->harmonic_v)) {
-        NEW_OBJECT_FAILURE("harmonic_velocity_t *");
+        NEW_OBJECT_FAILURE(*harmonic_velocity_t);
     }
     if (is_not_created(this->cartesian_v)) {
-        NEW_OBJECT_FAILURE("cartesian_velocity_t *");
+        NEW_OBJECT_FAILURE(*cartesian_velocity_t);
     }
     if (is_not_created(this->clock)) {
-        NEW_OBJECT_FAILURE("time_handler_t");
+        NEW_OBJECT_FAILURE(*time_handler_t);
     }
     return this->harmonic_v && this->cartesian_v && this->clock;
 }

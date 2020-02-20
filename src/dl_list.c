@@ -37,7 +37,7 @@ bool DL_LIST_add_item(dl_list_t *const this, void *const item) {
 
     dl_node_t *new_node = dl_list_create_node(item, this->item_size, this->storage_info);
     if (is_not_created(new_node)) {
-        NEW_OBJECT_FAILURE("dl_node_t *");
+        NEW_OBJECT_FAILURE(*dl_node_t);
         return false;
     }
 

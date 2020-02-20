@@ -10,11 +10,11 @@
 
 static bool is_aquarium_created_properly(aquarium_t * this) {
     if (is_not_created(this->fishes)) {
-        NEW_OBJECT_FAILURE("fishes_t");
+        NEW_OBJECT_FAILURE(*fishes_t);
     } else if (is_not_created(this->display)) {
-        NEW_OBJECT_FAILURE("display_t");
+        NEW_OBJECT_FAILURE(*display_t);
     } else if (is_not_created(this->clock)) {
-        NEW_OBJECT_FAILURE("time_handler_t");
+        NEW_OBJECT_FAILURE(*time_handler_t);
     }
     return this->fishes && this->display && this->clock;
 }
@@ -48,7 +48,7 @@ aquarium_t *delete_aquarium(aquarium_t *this) {
     if (is_all_deleted(3, this->fishes, this->display, this->clock)) {
         return delete_object(this);
     } else {
-        DELETE_OBJECT_FAILURE("* aquarium_t");
+        DELETE_OBJECT_FAILURE(*aquarium_t);
         return this;
     }
 }
