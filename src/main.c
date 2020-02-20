@@ -17,7 +17,6 @@ void set_fishes_initial_data(fishes_initial_data_t *data);
 #define AQUARIUM_WIDTH 1080
 #define AQUARIUM_HEIGHT 720
 
-
 int main() {
     srand(time(NULL));
     display_initial_data_t display_initial_data;
