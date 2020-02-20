@@ -29,10 +29,10 @@ typedef struct {
     SDL_Texture * fish_image;
 } display_t;
 
-display_t * create_display(display_initial_data_t * display_initial_data);
+display_t * new_display(display_initial_data_t * display_initial_data);
 
 void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock);
 
-display_t * destroy_display(display_t * this);
+display_t * delete_display(display_t * this);
 
 #endif //AQUARIUM_DISPLAY_H

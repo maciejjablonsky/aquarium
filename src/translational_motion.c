@@ -8,16 +8,16 @@
 #include <math.h>
 
 translational_motion_t *
-create_translational_motion(long double x_0, long double y_0, long double velocity_value, long double angle,
-                            long double init_phase) {
-    translational_motion_t *this = create_object(sizeof(translational_motion_t));
+new_translational_motion(long double x_0, long double y_0, long double velocity_value, long double angle,
+                         long double init_phase) {
+    translational_motion_t *this = new_object(sizeof(translational_motion_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create translational motion object.\n");
         return NULL;
     }
-    this->delta_motion = create_cartesian_point(x_0, y_0);
-    this->polar_v = create_polar_velocity(velocity_value, angle, init_phase);
-    this->cartesian_v = create_cartesian_velocity(
+    this->delta_motion = new_cartesian_point(x_0, y_0);
+    this->polar_v = new_polar_velocity(velocity_value, angle, init_phase);
+    this->cartesian_v = new_cartesian_velocity(
             velocity_value * cosl(this->polar_v->angle),
             velocity_value * sinl
                     (this->polar_v->angle));
@@ -27,10 +27,10 @@ create_translational_motion(long double x_0, long double y_0, long double veloci
     return this;
 }
 
-translational_motion_t *destroy_translational_motion(translational_motion_t *this) {
-    this->delta_motion = destroy_cartesian_point(this->delta_motion);
-    this->polar_v = destroy_polar_velocity(this->polar_v);
-    this->cartesian_v = destroy_cartesian_velocity(this->cartesian_v);
+translational_motion_t *delete_translational_motion(translational_motion_t *this) {
+    this->delta_motion = delete_cartesian_point(this->delta_motion);
+    this->polar_v = delete_polar_velocity(this->polar_v);
+    this->cartesian_v = delete_cartesian_velocity(this->cartesian_v);
     if (is_destroyed(this->delta_motion) && is_destroyed(this->polar_v) && is_destroyed(this->cartesian_v)) {
         return NULL;
     }

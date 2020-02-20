@@ -9,16 +9,16 @@
 
 
 
-aquarium_t *create_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
-                            size_t amount_of_fishes) {
-    aquarium_t *this = create_object(sizeof(aquarium_t));
+aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
+                         size_t amount_of_fishes) {
+    aquarium_t *this = new_object(sizeof(aquarium_t));
     if (is_not_created(this)) {
         return NULL;
     }
 
-    this->display = create_display(display_initial_data);
-    this->fishes = create_fishes(fish_initial_data, amount_of_fishes);
-    this->clock = create_time_handler();
+    this->display = new_display(display_initial_data);
+    this->fishes = new_fishes(fish_initial_data, amount_of_fishes);
+    this->clock = new_time_handler();
     this->action = false;
     if (is_not_created(this->fishes) || is_not_created(this->display) || is_not_created(this->clock)) {
         return NULL;
@@ -26,12 +26,12 @@ aquarium_t *create_aquarium(display_initial_data_t *display_initial_data, fishes
     return this;
 }
 
-aquarium_t *destroy_aquarium(aquarium_t *this) {
-    this->fishes = destroy_fishes(this->fishes);
-    this->display = destroy_display(this->display);
-    this->clock = destroy_time_handler(this->clock);
+aquarium_t *delete_aquarium(aquarium_t *this) {
+    this->fishes = delete_fishes(this->fishes);
+    this->display = delete_display(this->display);
+    this->clock = delete_time_handler(this->clock);
     if (is_destroyed(this->fishes) && is_destroyed(this->display) && is_destroyed(this->clock)) {
-        return destroy_object(this);
+        return delete_object(this);
     }
     return NULL;
 }

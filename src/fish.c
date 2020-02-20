@@ -15,9 +15,9 @@
 #define to_degrees(radians) ((radians) * 180 / M_PI)
 
 
-fish_t *create_fish(size_t max_x, size_t max_y, SDL_Rect
+fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period) {
-    fish_t *this = create_object(sizeof(fish_t));
+    fish_t *this = new_object(sizeof(fish_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create fish.\n");
         return NULL;
@@ -26,7 +26,7 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
     this->z_motion_phase = ldto_radians(ldrandom_range(0,360));
     long double x_0 = ldrandom_range(0, max_x);
     long double y_0 = ldrandom_range(0, max_y);
-    this->coords = create_cartesian_point(x_0, y_0);
+    this->coords = new_cartesian_point(x_0, y_0);
 
 
     long double translational_angle = ldto_radians(ldrandom_range(0, 360));
@@ -35,15 +35,15 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
     long double v_y = initial_translational_velocity * sinl(translational_angle);
 
 
-    this->translational_motion = create_translational_motion(x_0, y_0,
-                                                             initial_translational_velocity, translational_angle,
-                                                             translational_angle);
+    this->translational_motion = new_translational_motion(x_0, y_0,
+                                                          initial_translational_velocity, translational_angle,
+                                                          translational_angle);
     long double harmonic_angle = translational_angle + M_PI / 2;
-    this->harmonic_motion = create_harmonic_motion(wave_amplitude, wave_period,
-                                                   ldto_radians(ldrandom_range(0, 360)),
-                                                   harmonic_angle);
+    this->harmonic_motion = new_harmonic_motion(wave_amplitude, wave_period,
+                                                ldto_radians(ldrandom_range(0, 360)),
+                                                harmonic_angle);
 
-    this->general_velocity = create_cartesian_velocity(0, 0);
+    this->general_velocity = new_cartesian_velocity(0, 0);
     this->dimensions = dimensions;
 
     if (is_not_created(this->coords) || is_not_created(this->translational_motion) || is_not_created
@@ -55,18 +55,18 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
 }
 
 
-fish_t *destroy_fish(fish_t *this) {
-    this->coords = destroy_cartesian_point(this->coords);
-    this->general_velocity = destroy_cartesian_velocity(this->general_velocity);
-    this->harmonic_motion = destroy_harmonic_motion(this->harmonic_motion);
-    this->translational_motion = destroy_translational_motion((this->translational_motion));
+fish_t *delete_fish(fish_t *fish) {
+    fish->coords = delete_cartesian_point(fish->coords);
+    fish->general_velocity = delete_cartesian_velocity(fish->general_velocity);
+    fish->harmonic_motion = delete_harmonic_motion(fish->harmonic_motion);
+    fish->translational_motion = delete_translational_motion((fish->translational_motion));
 
-    if (is_destroyed(this->coords) && is_destroyed(this->general_velocity) && is_destroyed
-            (this->translational_motion) &&
-        is_destroyed(this->harmonic_motion)) {
-        return destroy_object(this);
+    if (is_destroyed(fish->coords) && is_destroyed(fish->general_velocity) && is_destroyed
+            (fish->translational_motion) &&
+        is_destroyed(fish->harmonic_motion)) {
+        return delete_object(fish);
     }
-    return this;
+    return fish;
 }
 
 void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimensions) {

@@ -13,7 +13,7 @@ typedef struct {
     long double init_phase;
 } polar_point_t;
 
-polar_point_t * create_polar_point(long double r, long double angle, long double init_phase);
-polar_point_t * destroy_polar_point(polar_point_t * this);
+polar_point_t * new_polar_point(long double r, long double angle, long double init_phase);
+polar_point_t * delete_polar_point(polar_point_t * this);
 
 #endif //AQUARIUM_POLAR_POINT_H

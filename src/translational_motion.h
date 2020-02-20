@@ -16,9 +16,9 @@ typedef struct {
 } translational_motion_t;
 
 translational_motion_t *
-create_translational_motion(long double x_0, long double y_0, long double velocity_value, long double angle,
-                            long double init_phase);
-translational_motion_t * destroy_translational_motion(translational_motion_t * this);
+new_translational_motion(long double x_0, long double y_0, long double velocity_value, long double angle,
+                         long double init_phase);
+translational_motion_t * delete_translational_motion(translational_motion_t * this);
 
 void update_translational_motion(translational_motion_t *this, long double dtime);
 

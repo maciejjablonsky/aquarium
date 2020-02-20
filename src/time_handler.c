@@ -7,8 +7,8 @@
 #include "time_handler.h"
 #include "object.h"
 
-time_handler_t *create_time_handler(void) {
-    time_handler_t * this = create_object(sizeof(time_handler_t));
+time_handler_t *new_time_handler(void) {
+    time_handler_t * this = new_object(sizeof(time_handler_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create time handler.\n");
         return NULL;
@@ -17,8 +17,8 @@ time_handler_t *create_time_handler(void) {
     return this;
 }
 
-time_handler_t *destroy_time_handler(time_handler_t *handler) {
-    return destroy_object(handler);
+time_handler_t *delete_time_handler(time_handler_t *handler) {
+    return delete_object(handler);
 }
 
 void reset_time_handler(time_handler_t *handler) {

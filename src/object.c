@@ -7,10 +7,10 @@
 #include <stdlib.h>
 
 
-void *create_object(size_t size) {
+void *new_object(size_t size) {
     return malloc(size);
 }
-void *destroy_object(void *object) {
+void *delete_object(void *object) {
     if (is_created(object)) {
         free(object);
     }

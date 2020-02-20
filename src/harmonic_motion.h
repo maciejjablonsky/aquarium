@@ -17,9 +17,9 @@ typedef struct {
     time_handler_t * clock;
 } harmonic_motion_t;
 
-harmonic_motion_t * create_harmonic_motion(long double amplitude, long double period, long double init_phase,
-                                           long double angle_to_y_axis);
-harmonic_motion_t * destroy_harmonic_motion(harmonic_motion_t * this);
+harmonic_motion_t * new_harmonic_motion(long double amplitude, long double period, long double init_phase,
+                                        long double angle_to_x_axis);
+harmonic_motion_t * delete_harmonic_motion(harmonic_motion_t * this);
 
 void update_harmonic_motion(harmonic_motion_t * this, long double dtime);
 

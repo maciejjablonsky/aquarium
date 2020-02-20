@@ -17,9 +17,9 @@ typedef struct  {
     bool action;
 } aquarium_t;
 
-aquarium_t *create_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
-                            size_t amount_of_fishes);
-aquarium_t * destroy_aquarium(aquarium_t * this);
+aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
+                         size_t amount_of_fishes);
+aquarium_t * delete_aquarium(aquarium_t * this);
 
 void run_aquarium(aquarium_t * aquarium);
 bool start_action(aquarium_t * aquarium);

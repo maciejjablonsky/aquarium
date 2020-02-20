@@ -24,9 +24,9 @@ int main() {
     set_fishes_initial_data(&fishes_initial_data);
     size_t amount_of_fishes =300;
 
-    aquarium_t *aquarium = create_aquarium(&display_initial_data, &fishes_initial_data, amount_of_fishes);
+    aquarium_t *aquarium = new_aquarium(&display_initial_data, &fishes_initial_data, amount_of_fishes);
     run_aquarium(aquarium);
-    destroy_aquarium(aquarium);
+    delete_aquarium(aquarium);
 }
 
 

@@ -25,10 +25,10 @@ typedef struct fish {
     long double z_motion_phase;
 } fish_t;
 
-fish_t *create_fish(size_t max_x, size_t max_y, SDL_Rect
+fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period);
 
-fish_t *destroy_fish(fish_t *fish);
+fish_t *delete_fish(fish_t *fish);
 
 void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle,
                time_handler_t *clock);

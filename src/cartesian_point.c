@@ -14,8 +14,8 @@ long double distance_between(const cartesian_point_t *p1, const cartesian_point_
     return sqrtl(x*x + y*y);
 }
 
-cartesian_point_t *create_cartesian_point(long double x, long double y) {
-    cartesian_point_t * this = create_object(sizeof(cartesian_point_t));
+cartesian_point_t *new_cartesian_point(long double x, long double y) {
+    cartesian_point_t * this = new_object(sizeof(cartesian_point_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create cartesian point.\n");
         return NULL;
@@ -25,6 +25,6 @@ cartesian_point_t *create_cartesian_point(long double x, long double y) {
     return this;
 }
 
-cartesian_point_t *destroy_cartesian_point(cartesian_point_t *this) {
-    return destroy_object(this);
+cartesian_point_t *delete_cartesian_point(cartesian_point_t *this) {
+    return delete_object(this);
 }

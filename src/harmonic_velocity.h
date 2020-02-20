@@ -15,9 +15,9 @@ typedef struct {
     long double angular_v;
 } harmonic_velocity_t;
 
-harmonic_velocity_t * create_harmonic_velocity(long double amplitude, long double period, long double init_phase);
+harmonic_velocity_t * new_harmonic_velocity(long double amplitude, long double period, long double init_phase);
 
-harmonic_velocity_t * destroy_harmonic_velocity(harmonic_velocity_t * this);
+harmonic_velocity_t * delete_harmonic_velocity(harmonic_velocity_t * this);
 
 void update_harmonic_velocity(harmonic_velocity_t * this, long double dtime);
 

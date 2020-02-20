@@ -16,8 +16,8 @@ static bool load_textures(display_t * new_display, display_initial_data_t * disp
 static inline bool is_image_loaded(void *image);
 static inline bool is_image_not_loaded(void *image);
 
-display_t *create_display(display_initial_data_t *display_initial_data) {
-    display_t * this = create_object(sizeof(display_t));
+display_t *new_display(display_initial_data_t *display_initial_data) {
+    display_t * this = new_object(sizeof(display_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to allocate memory for display.\n");
         return NULL;
@@ -96,12 +96,12 @@ static inline bool is_image_not_loaded(void *image) {
     return !is_image_loaded(image);
 }
 
-display_t *destroy_display(display_t *this) {
+display_t *delete_display(display_t *this) {
     SDL_DestroyTexture(this->fish_image);
     SDL_DestroyTexture(this->background_image);
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
-    return destroy_object(this);
+    return delete_object(this);
 }
 
 void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock) {

@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-void * create_object(size_t size);
-void * destroy_object(void * object);
+void * new_object(size_t size);
+void * delete_object(void * object);
 bool is_not_created(void *object);
 
 bool is_created(void *object);

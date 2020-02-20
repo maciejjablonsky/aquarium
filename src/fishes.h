@@ -25,9 +25,9 @@ typedef struct {
 
 typedef dl_list_t fishes_t;
 
-fishes_t * create_fishes(fishes_initial_data_t * fish_initial_data, size_t amount_of_fishes);
+fishes_t * new_fishes(fishes_initial_data_t * fish_initial_data, size_t amount_of_fishes);
 
-fishes_t * destroy_fishes(fishes_t * this);
+fishes_t * delete_fishes(fishes_t * this);
 
 void multiply_fishes_velocity(fishes_t * this, long double multiplier);
 

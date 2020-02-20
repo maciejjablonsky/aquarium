@@ -5,8 +5,8 @@
 #include <math.h>
 #include "harmonic_velocity.h"
 
-harmonic_velocity_t *create_harmonic_velocity(long double amplitude, long double period, long double init_phase) {
-    harmonic_velocity_t * this = create_object(sizeof(harmonic_velocity_t));
+harmonic_velocity_t *new_harmonic_velocity(long double amplitude, long double period, long double init_phase) {
+    harmonic_velocity_t * this = new_object(sizeof(harmonic_velocity_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create harmonic velocity object.\n");
         return NULL;
@@ -18,8 +18,8 @@ harmonic_velocity_t *create_harmonic_velocity(long double amplitude, long double
     return this;
 }
 
-harmonic_velocity_t *destroy_harmonic_velocity(harmonic_velocity_t *this) {
-    return destroy_object(this);
+harmonic_velocity_t *delete_harmonic_velocity(harmonic_velocity_t *this) {
+    return delete_object(this);
 }
 
 void update_harmonic_velocity(harmonic_velocity_t *this, long double dtime) {

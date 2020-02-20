@@ -7,29 +7,29 @@
 #include "harmonic_velocity.h"
 #include <math.h>
 
-harmonic_motion_t *create_harmonic_motion(long double amplitude, long double period, long double init_phase,
-                                          long double angle_to_x_axis) {
-    harmonic_motion_t * this = create_object(sizeof(harmonic_motion_t));
+harmonic_motion_t *new_harmonic_motion(long double amplitude, long double period, long double init_phase,
+                                       long double angle_to_x_axis) {
+    harmonic_motion_t * this = new_object(sizeof(harmonic_motion_t));
     if (is_not_created(this)) {
         fprintf(stderr, "Failed to create harmonic movement.\n");
         return NULL;
     }
     this->angle_to_x_axis = angle_to_x_axis;
-    this->harmonic_v = create_harmonic_velocity(amplitude, period, init_phase);
-    this->cartesian_v = create_cartesian_velocity(0,0);
-    this->clock = create_time_handler();
+    this->harmonic_v = new_harmonic_velocity(amplitude, period, init_phase);
+    this->cartesian_v = new_cartesian_velocity(0, 0);
+    this->clock = new_time_handler();
     if (is_not_created(this->harmonic_v) || is_not_created(this->cartesian_v) || is_not_created(this->clock)) {
         return NULL;
     }
     return this;
 }
 
-harmonic_motion_t *destroy_harmonic_motion(harmonic_motion_t *this) {
-    this->harmonic_v = destroy_harmonic_velocity(this->harmonic_v);
-    this->cartesian_v = destroy_cartesian_velocity(this->cartesian_v);
-    this->clock = destroy_time_handler(this->clock);
+harmonic_motion_t *delete_harmonic_motion(harmonic_motion_t *this) {
+    this->harmonic_v = delete_harmonic_velocity(this->harmonic_v);
+    this->cartesian_v = delete_cartesian_velocity(this->cartesian_v);
+    this->clock = delete_time_handler(this->clock);
     if (is_destroyed(this->harmonic_v) && is_destroyed(this->cartesian_v) && is_destroyed(this->clock)) {
-        return destroy_object(this);
+        return delete_object(this);
     }
     return this;
 }
