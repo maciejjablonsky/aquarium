@@ -9,6 +9,7 @@
 #include "time_handler.h"
 #include "degrees.h"
 #include "random.h"
+#include "memory_handling.h"
 #include <math.h>
 
 #define to_radians(degrees) ((degrees) * M_PI / 180)
@@ -19,11 +20,11 @@ fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period) {
     fish_t *this = new_object(sizeof(fish_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create fish.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
 
-    this->z_motion_phase = ldto_radians(ldrandom_range(0,360));
+    this->z_motion_phase = ldto_radians(ldrandom_range(0, 360));
     long double x_0 = ldrandom_range(0, max_x);
     long double y_0 = ldrandom_range(0, max_y);
     this->coords = new_cartesian_point(x_0, y_0);
@@ -55,18 +56,22 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
 }
 
 
-fish_t *delete_fish(fish_t *fish) {
-    fish->coords = delete_cartesian_point(fish->coords);
-    fish->general_velocity = delete_cartesian_velocity(fish->general_velocity);
-    fish->harmonic_motion = delete_harmonic_motion(fish->harmonic_motion);
-    fish->translational_motion = delete_translational_motion((fish->translational_motion));
-
-    if (is_destroyed(fish->coords) && is_destroyed(fish->general_velocity) && is_destroyed
-            (fish->translational_motion) &&
-        is_destroyed(fish->harmonic_motion)) {
-        return delete_object(fish);
+fish_t *delete_fish(fish_t *this) {
+    if (is_not_created(this)) {
+        return NULL;
     }
-    return fish;
+    this->coords = delete_cartesian_point(this->coords);
+    this->general_velocity = delete_cartesian_velocity(this->general_velocity);
+    this->harmonic_motion = delete_harmonic_motion(this->harmonic_motion);
+    this->translational_motion = delete_translational_motion((this->translational_motion));
+
+
+    if (is_all_deleted(4, this->coords, this->general_velocity, this->translational_motion, this->harmonic_motion)) {
+        return delete_object(this);
+    } else {
+        DELETE_OBJECT_FAILURE("* fish_t");
+        return this;
+    }
 }
 
 void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimensions) {
@@ -79,10 +84,10 @@ void draw_directions(SDL_Renderer *renderer, fish_t *fish, SDL_Rect *fish_dimens
                        y);
 }
 
-long double scale_factor_fish(fish_t * fish, time_handler_t * clock) {
+long double scale_factor_fish(fish_t *fish, time_handler_t *clock) {
     return sinl
-    (((2*M_PI)/1.25) *
-    clock->global + fish->z_motion_phase)*0.02 + 1;
+                   (((2 * M_PI) / 1.25) *
+                    clock->global + fish->z_motion_phase) * 0.02 + 1;
 }
 
 void show_fish(SDL_Renderer *renderer, fish_t *fish, SDL_Texture *fish_texture, SDL_Rect *fish_rectangle,

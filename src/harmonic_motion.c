@@ -5,33 +5,52 @@
 #include <stdio.h>
 #include "harmonic_motion.h"
 #include "harmonic_velocity.h"
+#include "memory_handling.h"
 #include <math.h>
+
+static bool is_harmonic_motion_created_properly(harmonic_motion_t *this) {
+    if (is_not_created(this->harmonic_v)) {
+        NEW_OBJECT_FAILURE("harmonic_velocity_t *");
+    }
+    if (is_not_created(this->cartesian_v)) {
+        NEW_OBJECT_FAILURE("cartesian_velocity_t *");
+    }
+    if (is_not_created(this->clock)) {
+        NEW_OBJECT_FAILURE("time_handler_t");
+    }
+    return this->harmonic_v && this->cartesian_v && this->clock;
+}
 
 harmonic_motion_t *new_harmonic_motion(long double amplitude, long double period, long double init_phase,
                                        long double angle_to_x_axis) {
-    harmonic_motion_t * this = new_object(sizeof(harmonic_motion_t));
+    harmonic_motion_t *this = new_object(sizeof(harmonic_motion_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create harmonic movement.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     this->angle_to_x_axis = angle_to_x_axis;
     this->harmonic_v = new_harmonic_velocity(amplitude, period, init_phase);
     this->cartesian_v = new_cartesian_velocity(0, 0);
     this->clock = new_time_handler();
-    if (is_not_created(this->harmonic_v) || is_not_created(this->cartesian_v) || is_not_created(this->clock)) {
-        return NULL;
+    if (is_harmonic_motion_created_properly(this)) {
+        return this;
     }
-    return this;
+    return delete_harmonic_motion(this);
 }
 
 harmonic_motion_t *delete_harmonic_motion(harmonic_motion_t *this) {
+    if (is_not_created(this)) {
+        return NULL;
+    }
     this->harmonic_v = delete_harmonic_velocity(this->harmonic_v);
     this->cartesian_v = delete_cartesian_velocity(this->cartesian_v);
     this->clock = delete_time_handler(this->clock);
-    if (is_destroyed(this->harmonic_v) && is_destroyed(this->cartesian_v) && is_destroyed(this->clock)) {
+    if (is_all_deleted(3, this->harmonic_v, this->cartesian_v, this->clock)) {
         return delete_object(this);
+    } else {
+        DELETE_OBJECT_FAILURE("* harmonic_motion_t");
+        return this;
     }
-    return this;
 }
 
 void update_harmonic_motion(harmonic_motion_t *this, long double dtime) {

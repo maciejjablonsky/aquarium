@@ -5,11 +5,12 @@
 #include <stdio.h>
 #include "polar_velocity.h"
 #include "object.h"
+#include "memory_handling.h"
 
 polar_velocity_t *new_polar_velocity(long double r, long double angle, long double init_phase) {
     polar_velocity_t * this = new_object(sizeof(polar_velocity_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create polar velocity.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     this->r = r;

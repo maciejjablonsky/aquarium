@@ -6,13 +6,24 @@
 #include "aquarium.h"
 #include "object.h"
 #include "cartesian_point.h"
+#include "memory_handling.h"
 
-
+static bool is_aquarium_created_properly(aquarium_t * this) {
+    if (is_not_created(this->fishes)) {
+        NEW_OBJECT_FAILURE("fishes_t");
+    } else if (is_not_created(this->display)) {
+        NEW_OBJECT_FAILURE("display_t");
+    } else if (is_not_created(this->clock)) {
+        NEW_OBJECT_FAILURE("time_handler_t");
+    }
+    return this->fishes && this->display && this->clock;
+}
 
 aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
                          size_t amount_of_fishes) {
     aquarium_t *this = new_object(sizeof(aquarium_t));
     if (is_not_created(this)) {
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
 
@@ -20,20 +31,26 @@ aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_in
     this->fishes = new_fishes(fish_initial_data, amount_of_fishes);
     this->clock = new_time_handler();
     this->action = false;
-    if (is_not_created(this->fishes) || is_not_created(this->display) || is_not_created(this->clock)) {
-        return NULL;
+    if (is_aquarium_created_properly(this)) {
+        return this;
+    } else{
+        return delete_aquarium(this);
     }
-    return this;
 }
 
 aquarium_t *delete_aquarium(aquarium_t *this) {
+    if (is_not_created(this)) {
+        return NULL;
+    }
     this->fishes = delete_fishes(this->fishes);
     this->display = delete_display(this->display);
     this->clock = delete_time_handler(this->clock);
-    if (is_destroyed(this->fishes) && is_destroyed(this->display) && is_destroyed(this->clock)) {
+    if (is_all_deleted(3, this->fishes, this->display, this->clock)) {
         return delete_object(this);
+    } else {
+        DELETE_OBJECT_FAILURE("* aquarium_t");
+        return this;
     }
-    return NULL;
 }
 
 void run_aquarium(aquarium_t *aquarium) {

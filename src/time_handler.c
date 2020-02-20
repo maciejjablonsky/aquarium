@@ -6,11 +6,12 @@
 #include <SDL2/SDL_timer.h>
 #include "time_handler.h"
 #include "object.h"
+#include "memory_handling.h"
 
 time_handler_t *new_time_handler(void) {
     time_handler_t * this = new_object(sizeof(time_handler_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create time handler.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     reset_time_handler(this);

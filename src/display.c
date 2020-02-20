@@ -6,48 +6,55 @@
 #include "display.h"
 #include "object.h"
 #include "fish.h"
+#include "memory_handling.h"
 
-static struct SDL_Window * create_window(display_initial_data_t * display_initial_data);
-static struct SDL_Renderer * create_renderer(struct SDL_Window * window, display_initial_data_t *
+static struct SDL_Window *create_window(display_initial_data_t *display_initial_data);
+
+static struct SDL_Renderer *create_renderer(struct SDL_Window *window, display_initial_data_t *
 display_initial_data);
+
 static inline bool are_textures_loaded(bool condition);
+
 static inline bool are_textures_not_loaded(bool condition);
-static bool load_textures(display_t * new_display, display_initial_data_t * display_initial_data);
+
+static bool load_textures(display_t *new_display, display_initial_data_t *display_initial_data);
+
 static inline bool is_image_loaded(void *image);
+
 static inline bool is_image_not_loaded(void *image);
 
 display_t *new_display(display_initial_data_t *display_initial_data) {
-    display_t * this = new_object(sizeof(display_t));
+    display_t *this = new_object(sizeof(display_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to allocate memory for display.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
 
     if (SDL_Init(display_initial_data->sdl_initialization_flags) != 0) {
-        fprintf(stderr, "Failed to init SDL due to: %s\n", SDL_GetError());
-        return NULL;
+        IMPLICIT_ERROR_MESSAGE("SDL fail due to: %s\n", SDL_GetError());
+        return delete_display(this);
     }
 
     this->window = create_window(display_initial_data);
     if (is_not_created(this->window)) {
-        fprintf(stderr, "Failed to create a window.\n");
-        return NULL;
+        IMPLICIT_ERROR_MESSAGE("Failed to create a window.\n");
+        return delete_display(this);
     }
     this->renderer = create_renderer(this->window, display_initial_data);
-    if (is_not_created(this->renderer))  {
-        fprintf(stderr, "Failed to create renderer.\n");
-        return NULL;
+    if (is_not_created(this->renderer)) {
+        IMPLICIT_ERROR_MESSAGE("Failed to create renderer.\n");
+        return delete_display(this);
     }
 
     if (are_textures_not_loaded(load_textures(this, display_initial_data))) {
-        return NULL;
+        return delete_display(this);
     }
 
     return this;
 }
 
 
-static struct SDL_Window * create_window(display_initial_data_t * display_initial_data) {
+static struct SDL_Window *create_window(display_initial_data_t *display_initial_data) {
     return SDL_CreateWindow(
             display_initial_data->window_name,
             display_initial_data->window_dimensions.x,
@@ -57,31 +64,31 @@ static struct SDL_Window * create_window(display_initial_data_t * display_initia
             display_initial_data->window_flags);
 }
 
-static struct SDL_Renderer * create_renderer(struct SDL_Window * window, display_initial_data_t *
+static struct SDL_Renderer *create_renderer(struct SDL_Window *window, display_initial_data_t *
 display_initial_data) {
     const int default_index_of_first_available_driver = -1;
     return SDL_CreateRenderer(window, default_index_of_first_available_driver, display_initial_data->renderer_flags);
 }
 
 static inline bool are_textures_loaded(bool condition) {
-    return condition  == true;
+    return condition == true;
 }
 
 static inline bool are_textures_not_loaded(bool condition) {
     return !are_textures_loaded(condition);
 }
 
-static bool load_textures(display_t * new_display, display_initial_data_t * display_initial_data) {
+static bool load_textures(display_t *new_display, display_initial_data_t *display_initial_data) {
     new_display->background_image = IMG_LoadTexture(new_display->renderer,
                                                     display_initial_data->background_image_filename);
     if (is_image_not_loaded(new_display->background_image)) {
-        fprintf(stderr, "Couldn't load image: %s\n", display_initial_data->background_image_filename);
+        EXPLICIT_ERROR_MESSAGE("Couldn't load image: %s\n", display_initial_data->background_image_filename);
         return false;
     }
 
     new_display->fish_image = IMG_LoadTexture(new_display->renderer, display_initial_data->fish_image_filename);
     if (is_image_not_loaded(new_display->fish_image)) {
-        fprintf(stderr, "Couldn't load image: %s\n", display_initial_data->fish_image_filename);
+        EXPLICIT_ERROR_MESSAGE("Couldn't load image: %s\n", display_initial_data->fish_image_filename);
         return false;
     }
 
@@ -97,11 +104,32 @@ static inline bool is_image_not_loaded(void *image) {
 }
 
 display_t *delete_display(display_t *this) {
-    SDL_DestroyTexture(this->fish_image);
-    SDL_DestroyTexture(this->background_image);
-    SDL_DestroyRenderer(this->renderer);
-    SDL_DestroyWindow(this->window);
-    return delete_object(this);
+    if (is_not_created(this)) {
+        return NULL;
+    }
+    if (is_created(this->fish_image)) {
+        SDL_DestroyTexture(this->fish_image);
+        this->fish_image = NULL;
+    }
+    if (is_created(this->background_image)) {
+        SDL_DestroyTexture(this->background_image);
+        this->background_image = NULL;
+    }
+    if (is_created(this->renderer)) {
+        SDL_DestroyRenderer(this->renderer);
+        this->renderer = NULL;
+    }
+    if (is_created(this->window)) {
+        SDL_DestroyWindow(this->window);
+        this->window = NULL;
+    }
+    if (is_all_deleted(4, this->fish_image, this->background_image, this->renderer, this->window)) {
+        return delete_object(this);
+    } else {
+        DELETE_OBJECT_FAILURE("* display_t");
+        return this;
+    }
+
 }
 
 void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock) {
@@ -111,7 +139,7 @@ void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *c
 
     SDL_RenderCopy(this->renderer, this->background_image, NULL, NULL);
 
-    fish_t * fish = NULL;
+    fish_t *fish = NULL;
     dl_list_foreach(fishes, fish) {
         update_fish_dimensions(fish);
         show_fish(this->renderer, fish, this->fish_image, &fish->dimensions, clock);

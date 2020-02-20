@@ -4,11 +4,12 @@
 
 #include <math.h>
 #include "harmonic_velocity.h"
+#include "memory_handling.h"
 
 harmonic_velocity_t *new_harmonic_velocity(long double amplitude, long double period, long double init_phase) {
     harmonic_velocity_t * this = new_object(sizeof(harmonic_velocity_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create harmonic velocity object.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     this->amplitude = amplitude;

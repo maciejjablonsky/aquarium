@@ -3,10 +3,12 @@
 //
 
 #define _USE_MATH_DEFINES
+
 #include <time.h>
 #include <SDL2/SDL.h>
 #include "aquarium.h"
 #include "graphics_paths.h"
+#include "object.h"
 
 void set_display_initial_data(display_initial_data_t *data);
 
@@ -25,7 +27,9 @@ int main() {
     size_t amount_of_fishes =300;
 
     aquarium_t *aquarium = new_aquarium(&display_initial_data, &fishes_initial_data, amount_of_fishes);
-    run_aquarium(aquarium);
+    if (is_created(aquarium)) {
+        run_aquarium(aquarium);
+    }
     delete_aquarium(aquarium);
 }
 

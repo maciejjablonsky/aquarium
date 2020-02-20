@@ -4,11 +4,12 @@
 
 #include <stdio.h>
 #include "polar_point.h"
+#include "memory_handling.h"
 
 polar_point_t *new_polar_point(long double r, long double angle, long double init_phase) {
     polar_point_t * this = new_object(sizeof(polar_point_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create polar point.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     this->r = r;

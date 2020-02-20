@@ -5,6 +5,7 @@
 #include "cartesian_point.h"
 #include "math.h"
 #include "object.h"
+#include "memory_handling.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -17,7 +18,7 @@ long double distance_between(const cartesian_point_t *p1, const cartesian_point_
 cartesian_point_t *new_cartesian_point(long double x, long double y) {
     cartesian_point_t * this = new_object(sizeof(cartesian_point_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create cartesian point.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     this->x = x;

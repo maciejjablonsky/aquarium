@@ -49,26 +49,26 @@ typedef struct
  *  - storage_info: storage_type enum describing type of item on the list (copy of item or pointer to item)
  *  - destructor: function handling deleting item, might be NULL when item doesn't have dynamically allocated memory
  */
-dl_list_t *DL_LIST_create(size_t item_size, dl_storage_type storage_info, void *(*destructor)(void *item_to_delete));
+dl_list_t *new_DL_LIST(size_t item_size, dl_storage_type storage_info, void *(*destructor)(void *item_to_delete));
 
 /*
- * adds item at the end of the list
+ * adds item at the end of the this
  *
  * return value: returns true if everything went fine, otherwise false (doesn't add item then)
  * parameters:
- *  - list: initialized dl_list
+ *  - this: initialized dl_list
  *  - item: address of item to copy
  */
-bool DL_LIST_add_item(dl_list_t *list, void *item);
+bool DL_LIST_add_item(dl_list_t *this, void *item);
 
 /*
- * gets number of items on the list
+ * gets number of items on the this
  *
  * return value: size_t number of items
  * parameters:
  *  - initialized dl_list
  */
-size_t DL_LIST_size(const dl_list_t *list);
+size_t DL_LIST_size(const dl_list_t *this);
 
 
 /*
@@ -79,7 +79,7 @@ size_t DL_LIST_size(const dl_list_t *list);
  *  - initialized dl_list
  *  - index of item to delete
  */
-bool DL_LIST_delete_item_at(dl_list_t *list, size_t index);
+bool DL_LIST_delete_item_at(dl_list_t *this, size_t index);
 
 
 /*
@@ -90,7 +90,7 @@ bool DL_LIST_delete_item_at(dl_list_t *list, size_t index);
  *  - initialized dl_list
  *  - size_t index of item
  */
-void *DL_LIST_item_at(dl_list_t *list, size_t index);
+void *DL_LIST_item_at(dl_list_t *this, size_t index);
 
 
 /*
@@ -102,9 +102,9 @@ void *DL_LIST_item_at(dl_list_t *list, size_t index);
  *
  *  example usage:
  *
- *  list = DL_LIST_delete(list);
+ *  list = delete_DL_LIST(list);
  */
-dl_list_t *DL_LIST_delete(dl_list_t *list);
+dl_list_t *delete_DL_LIST(dl_list_t *list);
 
 
 /*

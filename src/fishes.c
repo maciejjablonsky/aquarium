@@ -11,10 +11,10 @@
 
 
 fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_fishes) {
-    fishes_t *this = DL_LIST_create(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *)) delete_fish);
+    fishes_t *this = new_DL_LIST(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *)) delete_fish);
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create fishes.\n");
-        exit(1);
+        NEW_OBJECT_FAILURE("fishes_t");
+        return NULL;
     }
 
     for (size_t i = 0; i < amount_of_fishes; ++i) {
@@ -23,8 +23,8 @@ fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_
                                 fish_initial_data->initial_translational_velocity,
                                 fish_initial_data->amplitude, fish_initial_data->wave_movement_period);
         if (is_not_created(fish)) {
-            fprintf(stderr, "Failed to create %lu fish.\n", i + 1);
-            exit(1);
+            NEW_OBJECT_FAILURE("fish_t");
+            return delete_fishes(this);
         }
         DL_LIST_add_item(this, fish);
     }
@@ -44,7 +44,16 @@ void move_each_fish_in_aquarium(fishes_t *fishes, time_handler_t *clock, cartesi
 }
 
 fishes_t *delete_fishes(fishes_t *this) {
-    return DL_LIST_delete(this);
+    if (is_not_created(this)) {
+        return NULL;
+    }
+    void * ret = delete_DL_LIST(this);
+    if (is_deleted(ret)) {
+        return NULL;
+    } else {
+        DELETE_OBJECT_FAILURE("* fishes_t");
+        return this;
+    }
 }
 
 void multiply_fishes_velocity(fishes_t *this, long double multiplier) {

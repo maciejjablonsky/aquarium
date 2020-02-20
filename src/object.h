@@ -8,17 +8,38 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-void * new_object(size_t size);
-void * delete_object(void * object);
-bool is_not_created(void *object);
+#include <stdio.h>
 
-bool is_created(void *object);
+#define EXPLICIT_ERROR_MESSAGE(...) fprintf(stderr, "%s\n", __VA_ARGS__)
+
+#if defined(DEBUG)
+#include <stdarg.h>
+
+#define NEW_OBJECT_FAILURE(TYPE_NAME) \
+        fprintf(stderr, "[FILE: %s][LINE: %d] Failed to create object (%s).\n", __FILE__, __LINE__, (TYPE_NAME))
+#define DELETE_OBJECT_FAILURE(TYPE_NAME) \
+        fprintf(stderr, "[FILE: %s][LINE: %d] Cannot delete object (%s).\n", __FILE__, __LINE__, (TYPE_NAME))
+#define IMPLICIT_ERROR_MESSAGE(...) fprintf(stderr, "[FILE: %s][LINE: %d] %s.\n", __FILE__, __LINE__, __VA_ARGS__)
+#else
+#define IMPLICIT_ERROR_MESSAGE(...)
+#define NEW_OBJECT_FAILURE(TYPE_NAME)
+#define DELETE_OBJECT_FAILURE(TYPE_NAME)
+#endif
+
+void *new_object(size_t size);
+
+void *delete_object(void *object);
+
+bool is_not_created(const void *object);
+
+bool is_created(const void *object);
 
 
-bool is_destroyed(void * object);
+bool is_deleted(const void *object);
 
-bool is_not_destroyed(void * object);
+bool is_not_deleted(const void *object);
 
+bool is_all_deleted(size_t number_of_objects, ...);
 
 
 #endif //AQUARIUM_OBJECT_H

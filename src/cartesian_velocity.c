@@ -5,11 +5,12 @@
 #include <stdio.h>
 #include "cartesian_velocity.h"
 #include "object.h"
+#include "memory_handling.h"
 #include <math.h>
 cartesian_velocity_t *new_cartesian_velocity(long double x, long double y) {
     cartesian_velocity_t * this = new_object(sizeof(cartesian_velocity_t));
     if (is_not_created(this)) {
-        fprintf(stderr, "Failed to create cartesian velocity.\n");
+        MEMORY_NOT_ALLOCATED_MESSAGE();
         return NULL;
     }
     this->x = x;
