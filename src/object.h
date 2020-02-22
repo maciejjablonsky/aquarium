@@ -8,7 +8,9 @@
 #include <limits.h>
 
 #define TO_STR(TEXT) ("#TEXT")
-#define EXPLICIT_ERROR_MESSAGE(...) fprintf(stderr, "%s\n", __VA_ARGS__)
+#define EXPLICIT_ERROR_MESSAGE(...) \
+fprintf(stderr, __VA_ARGS__);\
+fputc('\n', stderr)
 
 #define NUM_POINTERS(...) (sizeof((long[]){__VA_ARGS__})/ sizeof(long))
 
@@ -16,6 +18,7 @@
 
 #define IS_ALL_DELETED(...) (is_all_deleted(NUM_POINTERS(__VA_ARGS__), __VA_ARGS__))
 #if defined(DEBUG)
+
 #include <stdarg.h>
 
 #define NEW_OBJECT_FAILURE(TYPE_NAME) \
