@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #ifndef AQUARIUM_TRANSLATIONAL_MOTION_H
 #define AQUARIUM_TRANSLATIONAL_MOTION_H
 
@@ -14,6 +10,7 @@ typedef struct {
     cartesian_velocity_t * cartesian_v;
     cartesian_point_t * delta_motion;
 } translational_motion_t;
+#define TRANSLATIONAL_MOTION_T_NAME "translational_motion_t"
 
 translational_motion_t *
 new_translational_motion(long double x_0, long double y_0, long double velocity_value, long double angle,

@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 12.02.2020.
-//
-
 #ifndef AQUARIUM_AQUARIUM_H
 #define AQUARIUM_AQUARIUM_H
 #include "display.h"
@@ -16,6 +12,7 @@ typedef struct  {
     time_handler_t * clock;
     bool action;
 } aquarium_t;
+#define AQUARIUM_T_NAME "aquarium_t"
 
 aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
                          size_t amount_of_fishes);

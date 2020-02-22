@@ -1,18 +1,19 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
 #include "time_handler.h"
 #include "object.h"
 #include "memory_handling.h"
 
+typedef enum {
+    TRANSLATIONAL_MOTION_NO_MEMORY
+} time_handler_error_code_t;
+
+static time_handler_t * delete_error_time_handler(time_handler_t * this, time_handler_error_code_t error_code);
+
 time_handler_t *new_time_handler(void) {
     time_handler_t * this = new_object(sizeof(time_handler_t));
     if (is_not_created(this)) {
-        MEMORY_NOT_ALLOCATED_MESSAGE();
-        return NULL;
+        return delete_error_time_handler(this, TRANSLATIONAL_MOTION_NO_MEMORY);
     }
     reset_time_handler(this);
     return this;
@@ -20,6 +21,17 @@ time_handler_t *new_time_handler(void) {
 
 time_handler_t *delete_time_handler(time_handler_t *handler) {
     return delete_object(handler);
+}
+
+static time_handler_t * delete_error_time_handler(time_handler_t * this, time_handler_error_code_t error_code) {
+    switch(error_code) {
+        case TRANSLATIONAL_MOTION_NO_MEMORY:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        default:
+            break;
+    }
+    return delete_time_handler(this);
 }
 
 void reset_time_handler(time_handler_t *handler) {

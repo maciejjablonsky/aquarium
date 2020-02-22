@@ -1,20 +1,20 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #include "fishes.h"
 #include "fish.h"
 #include "object.h"
 #include "time_handler.h"
 #include "wall.h"
+#include "memory_handling.h"
 
+typedef enum {
+    FISHES_NO_MEMORY, FISHES_FISH_FAIL
+} fishes_error_code_t;
 
+static fishes_t * delete_error_fishes(fishes_t * this, fishes_error_code_t error_code);
 
 fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_fishes) {
     fishes_t *this = new_DL_LIST(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *)) delete_fish);
     if (is_not_created(this)) {
-        NEW_OBJECT_FAILURE(*fishes_t);
-        return NULL;
+        return delete_error_fishes(this, FISHES_NO_MEMORY);
     }
 
     for (size_t i = 0; i < amount_of_fishes; ++i) {
@@ -23,12 +23,25 @@ fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_
                                 fish_initial_data->initial_translational_velocity,
                                 fish_initial_data->amplitude, fish_initial_data->wave_movement_period);
         if (is_not_created(fish)) {
-            NEW_OBJECT_FAILURE(*fish_t);
-            return delete_fishes(this);
+            return delete_error_fishes(this, FISHES_FISH_FAIL);
         }
         DL_LIST_add_item(this, fish);
     }
     return this;
+}
+
+static fishes_t * delete_error_fishes(fishes_t * this, fishes_error_code_t error_code) {
+    switch(error_code) {
+        case FISHES_NO_MEMORY:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        case FISHES_FISH_FAIL:
+            NEW_OBJECT_FAILURE(FISH_T_NAME);
+            break;
+        default:
+            break;
+    }
+    return delete_fishes(this);
 }
 
 void move_each_fish_in_aquarium(fishes_t *fishes, time_handler_t *clock, cartesian_point_t aquarium_dimensions) {
@@ -51,8 +64,8 @@ fishes_t *delete_fishes(fishes_t *this) {
     if (is_deleted(ret)) {
         return NULL;
     } else {
-        DELETE_OBJECT_FAILURE("* fishes_t");
-        return this;
+        DELETE_OBJECT_FAILURE(FISHES_T_NAME);
+        exit(2);
     }
 }
 

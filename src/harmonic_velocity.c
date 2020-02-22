@@ -1,22 +1,36 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #include <math.h>
 #include "harmonic_velocity.h"
 #include "memory_handling.h"
 
+typedef enum {
+    TRANSLATIONAL_MOTION_NO_MEMORY
+} harmonic_velocity_error_code_t;
+
+static harmonic_velocity_t * delete_error_harmonic_velocity_t(harmonic_velocity_t * this,
+        harmonic_velocity_error_code_t error_code);
+
 harmonic_velocity_t *new_harmonic_velocity(long double amplitude, long double period, long double init_phase) {
     harmonic_velocity_t * this = new_object(sizeof(harmonic_velocity_t));
     if (is_not_created(this)) {
-        MEMORY_NOT_ALLOCATED_MESSAGE();
-        return NULL;
+        return delete_error_harmonic_velocity_t(this, TRANSLATIONAL_MOTION_NO_MEMORY);
     }
     this->amplitude = amplitude;
     this->period = period;
     this->phase = init_phase;
     this->angular_v = count_harmonic_angular_velocity(period);
     return this;
+}
+
+static harmonic_velocity_t * delete_error_harmonic_velocity_t(harmonic_velocity_t * this,
+                                                              harmonic_velocity_error_code_t error_code) {
+    switch(error_code) {
+        case TRANSLATIONAL_MOTION_NO_MEMORY:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        default:
+            break;
+    }
+    return delete_harmonic_velocity(this);
 }
 
 harmonic_velocity_t *delete_harmonic_velocity(harmonic_velocity_t *this) {

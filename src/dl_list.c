@@ -1,7 +1,3 @@
-//
-// Created by maciek on 01.10.19.
-//
-
 #include "dl_list.h"
 #include "object.h"
 #include "memory_handling.h"
@@ -37,7 +33,7 @@ bool DL_LIST_add_item(dl_list_t *const this, void *const item) {
 
     dl_node_t *new_node = dl_list_create_node(item, this->item_size, this->storage_info);
     if (is_not_created(new_node)) {
-        NEW_OBJECT_FAILURE(*dl_node_t);
+        NEW_OBJECT_FAILURE(DL_LIST_T_NAME);
         return false;
     }
 
@@ -185,8 +181,8 @@ dl_list_t *delete_DL_LIST(dl_list_t *list) {
     if (is_created(list)) {
         while (list->size != 0) {
             if (!DL_LIST_delete_item_at(list, 0)) {
-                DELETE_OBJECT_FAILURE("* dl_list_t");
-                return list;
+                DELETE_OBJECT_FAILURE(DL_LIST_T_NAME);
+                exit(2);
             }
         }
         free(list);

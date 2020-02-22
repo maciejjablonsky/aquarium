@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #ifndef AQUARIUM_DISPLAY_H
 #define AQUARIUM_DISPLAY_H
 
@@ -28,6 +24,11 @@ typedef struct {
     SDL_Texture * background_image;
     SDL_Texture * fish_image;
 } display_t;
+#define DISPLAY_T_NAME "display_t"
+
+typedef enum {
+   DISPLAY_FAIL, SDL_INIT_FAIL, WINDOW_FAIL, RENDERER_FAIL, IMAGE_FAIL
+} display_error_code_t;
 
 display_t * new_display(display_initial_data_t * display_initial_data);
 

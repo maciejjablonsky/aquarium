@@ -1,8 +1,3 @@
-//
-// Created by maciek on 20.09.19.
-//
-
-
 #include "fish.h"
 #include "object.h"
 #include "wall.h"
@@ -15,26 +10,31 @@
 #define to_radians(degrees) ((degrees) * M_PI / 180)
 #define to_degrees(radians) ((radians) * 180 / M_PI)
 
+typedef enum {
+    FISH_NO_MEMORY, FISH_COORDS_FAIL, FISH_TRANSLATIONAL_MOTION_FAIL, FISH_HARMONIC_MOTION_FAIL,
+    FISH_GENERAL_VELOCITY_FAIL
+} fish_error_code_t;
+
+static fish_t * delete_failed_fish(fish_t * this, fish_error_code_t error_code);
+
+static fish_error_code_t get_fish_error_code(fish_t * this);
 
 fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period) {
     fish_t *this = new_object(sizeof(fish_t));
     if (is_not_created(this)) {
-        MEMORY_NOT_ALLOCATED_MESSAGE();
-        return NULL;
+        return delete_failed_fish(this, FISH_NO_MEMORY);
     }
 
     this->z_motion_phase = ldto_radians(ldrandom_range(0, 360));
-    long double x_0 = ldrandom_range(0, max_x);
-    long double y_0 = ldrandom_range(0, max_y);
+    long double x_0 = dimensions.x;//ldrandom_range(0, max_x);
+    long double y_0 = dimensions.y;// ldrandom_range(0, max_y);
     this->coords = new_cartesian_point(x_0, y_0);
 
 
     long double translational_angle = ldto_radians(ldrandom_range(0, 360));
-
     long double v_x = initial_translational_velocity * cosl(translational_angle);
     long double v_y = initial_translational_velocity * sinl(translational_angle);
-
 
     this->translational_motion = new_translational_motion(x_0, y_0,
                                                           initial_translational_velocity, translational_angle,
@@ -47,12 +47,43 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
     this->general_velocity = new_cartesian_velocity(0, 0);
     this->dimensions = dimensions;
 
-    if (is_not_created(this->coords) || is_not_created(this->translational_motion) || is_not_created
-            (this->harmonic_motion) ||
-        is_not_created(this->general_velocity)) {
-        return NULL;
+    if (IS_ALL_CREATED(this->coords, this->translational_motion, this->harmonic_motion, this->general_velocity)) {
+        return this;
+    } else {
+        return delete_failed_fish(this, get_fish_error_code(this));
     }
-    return this;
+}
+
+static fish_t * delete_failed_fish(fish_t * this, fish_error_code_t error_code) {
+    switch(error_code) {
+        case FISH_NO_MEMORY:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        case FISH_COORDS_FAIL:
+            NEW_OBJECT_FAILURE(CARTESIAN_POINT_T_NAME);
+            break;
+        case FISH_TRANSLATIONAL_MOTION_FAIL:
+            NEW_OBJECT_FAILURE(TRANSLATIONAL_MOTION_T_NAME);
+            break;
+        case FISH_HARMONIC_MOTION_FAIL:
+            NEW_OBJECT_FAILURE(HARMONIC_MOTION_T_NAME);
+            break;
+        case FISH_GENERAL_VELOCITY_FAIL:
+            NEW_OBJECT_FAILURE(CARTESIAN_VELOCITY_T_NAME);
+            break;
+        default:
+            break;
+    }
+    return delete_fish(this);
+}
+
+static fish_error_code_t get_fish_error_code(fish_t * this) {
+    if (is_not_created(this)) return FISH_NO_MEMORY;
+    else if(is_not_created(this->coords)) return FISH_COORDS_FAIL;
+    else if (is_not_created(this->translational_motion)) return FISH_TRANSLATIONAL_MOTION_FAIL;
+    else if (is_not_created(this->harmonic_motion)) return FISH_HARMONIC_MOTION_FAIL;
+    else if (is_not_created(this->general_velocity)) return FISH_GENERAL_VELOCITY_FAIL;
+    else return -1;
 }
 
 
@@ -66,11 +97,11 @@ fish_t *delete_fish(fish_t *this) {
     this->translational_motion = delete_translational_motion((this->translational_motion));
 
 
-    if (is_all_deleted(4, this->coords, this->general_velocity, this->translational_motion, this->harmonic_motion)) {
+    if (IS_ALL_DELETED(this->coords, this->general_velocity, this->translational_motion, this->harmonic_motion)) {
         return delete_object(this);
     } else {
-        DELETE_OBJECT_FAILURE("* fish_t");
-        return this;
+        DELETE_OBJECT_FAILURE(FISH_T_NAME);
+        exit(2);
     }
 }
 

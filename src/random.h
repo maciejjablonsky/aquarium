@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #ifndef AQUARIUM_RANDOM_H
 #define AQUARIUM_RANDOM_H
 

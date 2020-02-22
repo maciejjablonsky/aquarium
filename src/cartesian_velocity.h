@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #ifndef AQUARIUM_CARTESIAN_VELOCITY_H
 #define AQUARIUM_CARTESIAN_VELOCITY_H
 
@@ -10,6 +6,7 @@ typedef struct
     long double x;
     long double y;
 } cartesian_velocity_t;
+#define CARTESIAN_VELOCITY_T_NAME "cartesian_velocity_t"
 
 cartesian_velocity_t *new_cartesian_velocity(long double x, long double y);
 cartesian_velocity_t * delete_cartesian_velocity(cartesian_velocity_t * this);

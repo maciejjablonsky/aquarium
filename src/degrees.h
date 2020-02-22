@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #ifndef AQUARIUM_DEGREES_H
 #define AQUARIUM_DEGREES_H
 

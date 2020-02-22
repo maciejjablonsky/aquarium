@@ -1,7 +1,3 @@
-//
-// Created by maciek on 01.10.19.
-//
-
 #ifndef DOUBLE_LINKED_LIST_DL_LIST_H
 #define DOUBLE_LINKED_LIST_DL_LIST_H
 
@@ -38,6 +34,7 @@ typedef struct
 
     dl_iterator_t current;
 } dl_list_t;
+#define DL_LIST_T_NAME "dl_list_t"
 
 
 /*

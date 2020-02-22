@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #include "object.h"
 #include <stddef.h>
 #include "memory_handling.h"
@@ -46,6 +42,19 @@ bool is_deleted(const void *object) {
 
 bool is_not_deleted(const void *object) {
     return !is_deleted(object);
+}
+
+bool is_all_created(size_t number_of_objects, ...) {
+    va_list objects;
+    va_start(objects, number_of_objects);
+    for (int i = 0; i < number_of_objects; ++i) {
+        if (is_not_created(va_arg(objects, void *))) {
+            va_end(objects);
+            return false;
+        }
+    }
+    va_end(objects);
+    return true;
 }
 
 

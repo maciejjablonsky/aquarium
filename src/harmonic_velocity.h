@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #ifndef AQUARIUM_HARMONIC_VELOCITY_H
 #define AQUARIUM_HARMONIC_VELOCITY_H
 
@@ -14,6 +10,7 @@ typedef struct {
     long double phase;
     long double angular_v;
 } harmonic_velocity_t;
+#define HARMONIC_VELOCITY_T_NAME "harmonic_velocity_t"
 
 harmonic_velocity_t * new_harmonic_velocity(long double amplitude, long double period, long double init_phase);
 

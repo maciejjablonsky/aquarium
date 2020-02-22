@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #include <SDL2/SDL_image.h>
 #include "display.h"
 #include "object.h"
@@ -23,34 +19,52 @@ static inline bool is_image_loaded(void *image);
 
 static inline bool is_image_not_loaded(void *image);
 
+static display_t * delete_failed_display(display_t * this, display_error_code_t error_code);
+
 display_t *new_display(display_initial_data_t *display_initial_data) {
     display_t *this = new_object(sizeof(display_t));
     if (is_not_created(this)) {
-        MEMORY_NOT_ALLOCATED_MESSAGE();
-        return NULL;
+        return delete_failed_display(this, DISPLAY_FAIL);
     }
-
     if (SDL_Init(display_initial_data->sdl_initialization_flags) != 0) {
-        IMPLICIT_ERROR_MESSAGE("SDL fail due to: %s\n", SDL_GetError());
-        return delete_display(this);
+        return delete_failed_display(this, SDL_INIT_FAIL);
     }
-
     this->window = create_window(display_initial_data);
     if (is_not_created(this->window)) {
-        IMPLICIT_ERROR_MESSAGE("Failed to create a window.\n");
-        return delete_display(this);
+        return delete_failed_display(this, WINDOW_FAIL);
     }
     this->renderer = create_renderer(this->window, display_initial_data);
     if (is_not_created(this->renderer)) {
-        IMPLICIT_ERROR_MESSAGE("Failed to create renderer.\n");
-        return delete_display(this);
+        return delete_failed_display(this, RENDERER_FAIL);
     }
-
     if (are_textures_not_loaded(load_textures(this, display_initial_data))) {
-        return delete_display(this);
+        return delete_failed_display(this, IMAGE_FAIL);
     }
 
     return this;
+}
+
+static display_t * delete_failed_display(display_t * this, display_error_code_t error_code) {
+    switch (error_code) {
+        case DISPLAY_FAIL:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        case SDL_INIT_FAIL:
+            IMPLICIT_ERROR_MESSAGE("SDL error_code due to: %s", SDL_GetError());
+            break;
+        case WINDOW_FAIL:
+            NEW_OBJECT_FAILURE("SDL_Window");
+            break;
+        case RENDERER_FAIL:
+            NEW_OBJECT_FAILURE("struct SDL_Renderer");
+            break;
+        case IMAGE_FAIL:
+            NEW_OBJECT_FAILURE("SDL_Texture");
+            break;
+        default:
+            break;
+    }
+    return delete_display(this);
 }
 
 
@@ -123,13 +137,12 @@ display_t *delete_display(display_t *this) {
         SDL_DestroyWindow(this->window);
         this->window = NULL;
     }
-    if (is_all_deleted(4, this->fish_image, this->background_image, this->renderer, this->window)) {
+    if (IS_ALL_DELETED(this->fish_image, this->background_image, this->renderer, this->window)) {
         return delete_object(this);
     } else {
-        DELETE_OBJECT_FAILURE("* display_t");
-        return this;
+        DELETE_OBJECT_FAILURE(DISPLAY_T_NAME);
+        exit(2);
     }
-
 }
 
 void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock) {

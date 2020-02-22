@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #ifndef AQUARIUM_HARMONIC_MOTION_H
 #define AQUARIUM_HARMONIC_MOTION_H
 
@@ -16,6 +12,7 @@ typedef struct {
     cartesian_velocity_t * cartesian_v;
     time_handler_t * clock;
 } harmonic_motion_t;
+#define HARMONIC_MOTION_T_NAME "harmonic_motion_t"
 
 harmonic_motion_t * new_harmonic_motion(long double amplitude, long double period, long double init_phase,
                                         long double angle_to_x_axis);

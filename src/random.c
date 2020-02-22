@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #include "random.h"
 #include <stdlib.h>
 

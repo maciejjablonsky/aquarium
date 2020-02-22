@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #ifndef AQUARIUM_FISHES_H
 #define AQUARIUM_FISHES_H
 
@@ -24,6 +20,7 @@ typedef struct {
 } fishes_initial_data_t;
 
 typedef dl_list_t fishes_t;
+#define FISHES_T_NAME "fishes_t"
 
 fishes_t * new_fishes(fishes_initial_data_t * fish_initial_data, size_t amount_of_fishes);
 

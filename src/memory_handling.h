@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 20.02.2020.
-//
-
 #ifndef AQUARIUM_MEMORY_HANDLING_H
 #define AQUARIUM_MEMORY_HANDLING_H
 

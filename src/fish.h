@@ -1,7 +1,3 @@
-//
-// Created by maciek on 20.09.19.
-//
-
 #ifndef AQUARIUM_FISH_H
 #define AQUARIUM_FISH_H
 
@@ -24,6 +20,7 @@ typedef struct fish {
     SDL_Rect dimensions;
     long double z_motion_phase;
 } fish_t;
+#define FISH_T_NAME "fish_t"
 
 fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period);

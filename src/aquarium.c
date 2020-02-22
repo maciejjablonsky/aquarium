@@ -1,41 +1,62 @@
-//
-// Created by foreverhungry on 12.02.2020.
-//
-
 #include <SDL2/SDL_events.h>
 #include "aquarium.h"
 #include "object.h"
 #include "cartesian_point.h"
 #include "memory_handling.h"
 
-static bool is_aquarium_created_properly(aquarium_t * this) {
-    if (is_not_created(this->fishes)) {
-        NEW_OBJECT_FAILURE(*fishes_t);
-    } else if (is_not_created(this->display)) {
-        NEW_OBJECT_FAILURE(*display_t);
-    } else if (is_not_created(this->clock)) {
-        NEW_OBJECT_FAILURE(*time_handler_t);
-    }
-    return this->fishes && this->display && this->clock;
-}
+typedef enum {
+    AQUARIUM_NO_MEMORY, AQUARIUM_FISHES_FAIL, AQUARIUM_DISPLAY_FAIL, AQUARIUM_CLOCK_FAIL
+} aquarium_error_code_t;
+
+
+static aquarium_t * delete_failed_aquarium(aquarium_t * this, aquarium_error_code_t error_code);
+
+aquarium_error_code_t get_aquarium_error_code(aquarium_t * this);
 
 aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
                          size_t amount_of_fishes) {
     aquarium_t *this = new_object(sizeof(aquarium_t));
     if (is_not_created(this)) {
-        MEMORY_NOT_ALLOCATED_MESSAGE();
-        return NULL;
+        return delete_failed_aquarium(this, AQUARIUM_NO_MEMORY);
     }
 
     this->display = new_display(display_initial_data);
     this->fishes = new_fishes(fish_initial_data, amount_of_fishes);
     this->clock = new_time_handler();
     this->action = false;
-    if (is_aquarium_created_properly(this)) {
+    if (IS_ALL_CREATED(this->fishes, this->display, this->clock)) {
         return this;
     } else{
-        return delete_aquarium(this);
+        return delete_failed_aquarium(this, get_aquarium_error_code(this));
     }
+}
+
+static aquarium_t * delete_failed_aquarium(aquarium_t * this, aquarium_error_code_t error_code) {
+    switch(error_code) {
+        case AQUARIUM_NO_MEMORY:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        case AQUARIUM_FISHES_FAIL:
+            NEW_OBJECT_FAILURE(FISHES_T_NAME);
+            break;
+        case AQUARIUM_DISPLAY_FAIL:
+            NEW_OBJECT_FAILURE(DISPLAY_T_NAME);
+            break;
+        case AQUARIUM_CLOCK_FAIL:
+            NEW_OBJECT_FAILURE(TIME_HANDLER_T_NAME);
+            break;
+        default:
+            break;
+    }
+    return delete_aquarium(this);
+}
+
+aquarium_error_code_t get_aquarium_error_code(aquarium_t *this) {
+    if (is_not_created(this)) return AQUARIUM_NO_MEMORY;
+    else if (is_not_created(this->display)) return AQUARIUM_DISPLAY_FAIL;
+    else if (is_not_created(this->fishes)) return AQUARIUM_FISHES_FAIL;
+    else if (is_not_created(this->clock)) return AQUARIUM_CLOCK_FAIL;
+    else return -1;
 }
 
 aquarium_t *delete_aquarium(aquarium_t *this) {
@@ -45,11 +66,11 @@ aquarium_t *delete_aquarium(aquarium_t *this) {
     this->fishes = delete_fishes(this->fishes);
     this->display = delete_display(this->display);
     this->clock = delete_time_handler(this->clock);
-    if (is_all_deleted(3, this->fishes, this->display, this->clock)) {
+    if (IS_ALL_DELETED(this->fishes, this->display, this->clock)) {
         return delete_object(this);
     } else {
-        DELETE_OBJECT_FAILURE(*aquarium_t);
-        return this;
+        DELETE_OBJECT_FAILURE(AQUARIUM_T_NAME);
+        exit(2);
     }
 }
 

@@ -1,44 +1,67 @@
-//
-// Created by foreverhungry on 17.02.2020.
-//
-
 #include <stdio.h>
 #include "translational_motion.h"
 #include "object.h"
 #include "memory_handling.h"
 #include <math.h>
 
-static bool is_translational_motion_created_properly(translational_motion_t *this) {
-    if (is_not_created(this->polar_v)) {
-        NEW_OBJECT_FAILURE(*polar_velocity_t);
-    }
-    if (is_not_created(this->cartesian_v)) {
-        NEW_OBJECT_FAILURE(*cartesian_velocity_t);
-    }
-    if (is_not_created(this->delta_motion)) {
-        NEW_OBJECT_FAILURE(*cartesian_point);
-    }
-    return this->polar_v && this->cartesian_v && this->delta_motion;
-}
+typedef enum {
+    TRANSLATIONAL_MOTION_NO_MEMORY,
+    TRANSLATIONAL_MOTION_DELTA_MOTION_FAIL,
+    TRANSLATIONAL_MOTION_POLAR_VELOCITY_FAIL,
+    TRANSLATIONAL_MOTION_CARTESIAN_VELOCITY_FAIL
+} translational_motion_error_code_t;
+
+static translational_motion_t *delete_error_translational_motion(translational_motion_t *this,
+                                                                 translational_motion_error_code_t error_code);
+
+static translational_motion_error_code_t get_translational_motion_error_code(translational_motion_t *this);
 
 translational_motion_t *
 new_translational_motion(long double x_0, long double y_0, long double velocity_value, long double angle,
                          long double init_phase) {
     translational_motion_t *this = new_object(sizeof(translational_motion_t));
     if (is_not_created(this)) {
-        MEMORY_NOT_ALLOCATED_MESSAGE();
-        return NULL;
+        return delete_error_translational_motion(this, TRANSLATIONAL_MOTION_NO_MEMORY);
     }
     this->delta_motion = new_cartesian_point(x_0, y_0);
     this->polar_v = new_polar_velocity(velocity_value, angle, init_phase);
     this->cartesian_v = new_cartesian_velocity(
             velocity_value * cosl(angle),
             velocity_value * sinl(angle));
-    if (is_translational_motion_created_properly(this)) {
+    if (IS_ALL_CREATED(this->polar_v, this->cartesian_v, this->delta_motion)) {
         return this;
     } else {
-        return delete_translational_motion(this);
+        return delete_error_translational_motion(this, get_translational_motion_error_code(this));
     }
+}
+
+static translational_motion_error_code_t get_translational_motion_error_code(translational_motion_t *this) {
+    if (is_not_created(this)) return TRANSLATIONAL_MOTION_NO_MEMORY;
+    else if (is_not_created(this->delta_motion)) return TRANSLATIONAL_MOTION_DELTA_MOTION_FAIL;
+    else if (is_not_created(this->cartesian_v)) return TRANSLATIONAL_MOTION_CARTESIAN_VELOCITY_FAIL;
+    else if (is_not_created(this->polar_v)) return TRANSLATIONAL_MOTION_POLAR_VELOCITY_FAIL;
+    else return -1;
+}
+
+static translational_motion_t *delete_error_translational_motion(translational_motion_t *this,
+                                                                 translational_motion_error_code_t error_code) {
+    switch (error_code) {
+        case TRANSLATIONAL_MOTION_NO_MEMORY:
+            MEMORY_NOT_ALLOCATED_MESSAGE();
+            break;
+        case TRANSLATIONAL_MOTION_DELTA_MOTION_FAIL:
+            NEW_OBJECT_FAILURE(CARTESIAN_POINT_T_NAME);
+            break;
+        case TRANSLATIONAL_MOTION_POLAR_VELOCITY_FAIL:
+            NEW_OBJECT_FAILURE(POLAR_VELOCITY_T_NAME);
+            break;
+        case TRANSLATIONAL_MOTION_CARTESIAN_VELOCITY_FAIL:
+            NEW_OBJECT_FAILURE(CARTESIAN_VELOCITY_T_NAME);
+            break;
+        default:
+            break;
+    }
+    return NULL;
 }
 
 translational_motion_t *delete_translational_motion(translational_motion_t *this) {
@@ -48,11 +71,11 @@ translational_motion_t *delete_translational_motion(translational_motion_t *this
     this->delta_motion = delete_cartesian_point(this->delta_motion);
     this->polar_v = delete_polar_velocity(this->polar_v);
     this->cartesian_v = delete_cartesian_velocity(this->cartesian_v);
-    if (is_all_deleted(3, this->delta_motion, this->polar_v, this->cartesian_v)) {
+    if (IS_ALL_DELETED(this->delta_motion, this->polar_v, this->cartesian_v)) {
         return delete_object(this);
     } else {
-        DELETE_OBJECT_FAILURE("* translational_motion_t");
-        return this;
+        DELETE_OBJECT_FAILURE(TRANSLATIONAL_MOTION_T_NAME);
+        exit(2);
     }
 }
 

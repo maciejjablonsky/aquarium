@@ -1,7 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
 #ifndef AQUARIUM_CARTESIAN_POINT_H
 #define AQUARIUM_CARTESIAN_POINT_H
 
@@ -9,6 +5,8 @@ typedef struct {
     long double x;
     long double y;
 } cartesian_point_t;
+#define CARTESIAN_POINT_T_NAME "cartesian_point_t"
+
 
 cartesian_point_t * new_cartesian_point(long double x, long double y);
 cartesian_point_t * delete_cartesian_point(cartesian_point_t * this);

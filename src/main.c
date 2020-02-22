@@ -1,9 +1,3 @@
-//
-// Created by foreverhungry on 13.02.2020.
-//
-
-#define _USE_MATH_DEFINES
-
 #include <time.h>
 #include <SDL2/SDL.h>
 #include "aquarium.h"
@@ -14,7 +8,7 @@ void set_display_initial_data(display_initial_data_t *data);
 
 void set_fishes_initial_data(fishes_initial_data_t *data);
 
-#define AQUARIUM_WIDTH 1080
+#define AQUARIUM_WIDTH 720
 #define AQUARIUM_HEIGHT 720
 
 int main() {
@@ -23,7 +17,7 @@ int main() {
     set_display_initial_data(&display_initial_data);
     fishes_initial_data_t fishes_initial_data;
     set_fishes_initial_data(&fishes_initial_data);
-    size_t amount_of_fishes =300;
+    size_t amount_of_fishes =10000;
 
     aquarium_t *aquarium = new_aquarium(&display_initial_data, &fishes_initial_data, amount_of_fishes);
     if (is_created(aquarium)) {
@@ -45,8 +39,8 @@ void set_display_initial_data(display_initial_data_t *data) {
 }
 
 void set_fishes_initial_data(fishes_initial_data_t *data) {
-    data->fish_scale = 30;
-    SDL_Rect dimensions = {0, 0, data->fish_scale * 1.641, data->fish_scale};
+    data->fish_scale = 5;
+    SDL_Rect dimensions = {AQUARIUM_WIDTH/5, AQUARIUM_HEIGHT/5, data->fish_scale * 1.641, data->fish_scale};
     data->fish_dimensions = dimensions;
     data->initial_translational_velocity = 200;
     data->amplitude = 5;
