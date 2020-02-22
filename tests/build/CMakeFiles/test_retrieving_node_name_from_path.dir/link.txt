@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/test_retrieving_node_name_from_path.dir/xml_parsing/retrieving_node_name_from_path.c.o CMakeFiles/test_retrieving_node_name_from_path.dir/home/foreverhungry/code/aquarium/src/object.c.o  -o test_retrieving_node_name_from_path  -lSDL2 -lSDL2_image -lm /usr/lib/libxml2.so -lcriterion --debug=gdb 

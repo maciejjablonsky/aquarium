@@ -1,5 +1,5 @@
 <?xml version="1.0" standalone="no" ?>
-<aquarium_data>
+<aquarium>
     <fishes>
         <number_of_fishes>20</number_of_fishes>
         <fish>
@@ -37,4 +37,4 @@
             </paths>
         </graphics>
     </display>
-</aquarium_data>
+</aquarium>
