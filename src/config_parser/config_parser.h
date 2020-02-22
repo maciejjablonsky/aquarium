@@ -10,6 +10,7 @@ typedef struct {
 
 config_parser_t * new_config_parser(const char * xml_filename);
 config_parser_t * delete_config_parser(config_parser_t * this);
+xmlNode * get_config_xml_named_child(xmlNode * parent_node, const xmlChar *name);
 
 
 #endif //AQUARIUM_CONFIG_PARSER_H

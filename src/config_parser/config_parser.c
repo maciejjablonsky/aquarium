@@ -6,6 +6,7 @@
 #include "../object.h"
 #include "../memory_handling.h"
 #include <libxml/parser.h>
+#include <libxml/xmlstring.h>
 
 typedef enum {
     CONFIG_PARSER_NO_MEMORY, CONFIG_PARSER_XML_NOT_PARSED_FAIL, CONFIG_PARSER_EMPTY_XML_FAIL
@@ -44,6 +45,16 @@ config_parser_t *delete_config_parser(config_parser_t *this) {
         xmlFreeNode(this->root);
     }
     return delete_object(this);
+}
+
+xmlNode *get_config_xml_named_child(xmlNode *parent_node, const xmlChar *name) {
+    xmlNode * child = NULL;
+    for (child = parent_node->children; child != NULL; child = child->next) {
+        if (xmlStrEqual(child->name, name)) {
+            break;
+        }
+    }
+    return child;
 }
 
 static config_parser_t *delete_failed_config_parser(config_parser_t *this, config_parser_error_code_t error_code) {
