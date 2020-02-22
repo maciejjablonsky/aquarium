@@ -9,9 +9,11 @@ typedef enum {
 } aquarium_error_code_t;
 
 
-static aquarium_t * delete_failed_aquarium(aquarium_t * this, aquarium_error_code_t error_code);
+static aquarium_t *delete_failed_aquarium(aquarium_t *this, aquarium_error_code_t error_code);
 
-aquarium_error_code_t get_aquarium_error_code(aquarium_t * this);
+aquarium_error_code_t get_aquarium_error_code(aquarium_t *this);
+
+static aquarium_t * initialize_aquarium_from_config(aquarium_t *this, xmlNode *parent_node);
 
 aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
                          size_t amount_of_fishes) {
@@ -26,13 +28,33 @@ aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_in
     this->action = false;
     if (IS_ALL_CREATED(this->fishes, this->display, this->clock)) {
         return this;
-    } else{
+    } else {
         return delete_failed_aquarium(this, get_aquarium_error_code(this));
     }
 }
 
-static aquarium_t * delete_failed_aquarium(aquarium_t * this, aquarium_error_code_t error_code) {
-    switch(error_code) {
+aquarium_t *new_aquarium_from_config(xmlNode *parent_node) {
+    aquarium_t *this = new_object(sizeof(aquarium_t));
+    if (is_not_created(this)) {
+        return delete_failed_aquarium(this, AQUARIUM_NO_MEMORY);
+    }
+    this = initialize_aquarium_from_config(this, parent_node);
+    if (IS_ALL_CREATED(this->fishes, this->display, this->clock)) {
+        return this;
+    } else {
+        return delete_failed_aquarium(this, get_aquarium_error_code(this));
+    }
+}
+
+aquarium_t * initialize_aquarium_from_config(aquarium_t *this, xmlNode *parent_node) {
+    this->fishes = new_fishes_from_config(get_config_xml_named_child(parent_node, (const xmlChar*)"fishes"));
+    this->display = new_display_from_config(get_config_xml_named_child(parent_node, (const xmlChar *)"display"));
+    this->clock = new_time_handler();
+    this->action = false;
+}
+
+static aquarium_t *delete_failed_aquarium(aquarium_t *this, aquarium_error_code_t error_code) {
+    switch (error_code) {
         case AQUARIUM_NO_MEMORY:
             MEMORY_NOT_ALLOCATED_MESSAGE();
             break;
@@ -58,6 +80,8 @@ aquarium_error_code_t get_aquarium_error_code(aquarium_t *this) {
     else if (is_not_created(this->clock)) return AQUARIUM_CLOCK_FAIL;
     else return -1;
 }
+
+
 
 aquarium_t *delete_aquarium(aquarium_t *this) {
     if (is_not_created(this)) {
@@ -100,15 +124,13 @@ bool is_aquarium_running(aquarium_t *aquarium) {
 
 void handle_events(aquarium_t *aquarium) {
     SDL_Event sdl_event;
-    while (SDL_PollEvent(&sdl_event) > 0)
-    {
+    while (SDL_PollEvent(&sdl_event) > 0) {
         dispatch_event(aquarium, &sdl_event);
     }
 }
 
 void dispatch_event(aquarium_t *aquarium, SDL_Event *sdl_event) {
-    switch (sdl_event->type)
-    {
+    switch (sdl_event->type) {
         case SDL_QUIT:
             stop_action(aquarium);
             break;
@@ -119,8 +141,7 @@ void dispatch_event(aquarium_t *aquarium, SDL_Event *sdl_event) {
 }
 
 void dispatch_pressed_key(aquarium_t *aquarium, SDL_Event *sdl_event) {
-    switch (sdl_event->key.keysym.sym)
-    {
+    switch (sdl_event->key.keysym.sym) {
         case SDLK_ESCAPE:
             stop_action(aquarium);
             break;
@@ -143,3 +164,6 @@ cartesian_point_t get_aquarium_dimensions(aquarium_t *aquarium) {
     dimensions.y = y;
     return dimensions;
 }
+
+
+
