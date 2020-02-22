@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/test_skip_slashes.dir/xml_parsing/skip_slashes_in_path.c.o CMakeFiles/test_skip_slashes.dir/home/foreverhungry/code/aquarium/src/object.c.o  -o test_skip_slashes  -lSDL2 -lSDL2_image -lm /usr/lib/libxml2.so -lcriterion --debug=gdb 
