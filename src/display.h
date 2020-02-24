@@ -4,8 +4,14 @@
 #include <stdbool.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_render.h>
+#include "config_parser/config_parser.h"
 #include "fishes.h"
 
+#define DISPLAY_XML_NODE    TO_XML_STRING("display")
+#define WINDOW_XML_NODE     TO_XML_STRING("window")
+#define GRAPHICS_XML_NODE   TO_XML_STRING("graphics")
+#define FULLSCREEN_XML_NODE TO_XML_STRING("fullscreen")
+#define RESIZABLE_XML_NODE  TO_XML_STRING("resizable")
 
 typedef struct {
     SDL_Rect window_dimensions;
@@ -26,14 +32,14 @@ typedef struct {
 } display_t;
 #define DISPLAY_T_NAME "display_t"
 
-typedef enum {
-   DISPLAY_FAIL, SDL_INIT_FAIL, WINDOW_FAIL, RENDERER_FAIL, IMAGE_FAIL
-} display_error_code_t;
+
 
 display_t * new_display(display_initial_data_t * display_initial_data);
 
 void show_aquarium_contents(display_t *this, fishes_t *fishes, time_handler_t *clock);
 
 display_t * delete_display(display_t * this);
+
+display_t *new_display_from_config(config_parser_t *config_parser);
 
 #endif //AQUARIUM_DISPLAY_H

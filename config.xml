@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no" ?>
 <aquarium>
     <fishes>
-        <number_of_fishes>20</number_of_fishes>
+        <number_of_fishes>1000</number_of_fishes>
         <fish>
             <translational_motion>
                 <initial_translational_velocity>
@@ -12,24 +12,31 @@
                 <amplitude>50</amplitude>
                 <period>2</period>
             </harmonic_motion>
-            <texture_display_scale>20</texture_display_scale>
+            <texture>
+                <width_to_height_ratio>0.609384521633</width_to_height_ratio>
+                <width>30</width>
+            </texture>
+
 
         </fish>
     </fishes>
     <display>
         <window>
             <dimensions>
-                <width>1080</width>
-                <heigth>720</heigth>
+                <width>720</width>
+                <height>720</height>
             </dimensions>
-            <positon>
-                <x>50</x>
+            <position>
+                <x>100</x>
                 <y>50</y>
-            </positon>
+            </position>
             <name>Aquarium</name>
             <fullscreen>no</fullscreen>
             <resizable>yes</resizable>
         </window>
+        <renderer>
+            <accelerated>yes</accelerated>
+        </renderer>
         <graphics>
             <paths>
                 <ordinary_fish>graphics/pink_fish.png</ordinary_fish>

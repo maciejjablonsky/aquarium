@@ -6,6 +6,7 @@
 #include "random.h"
 #include "memory_handling.h"
 #include <math.h>
+#include "exit_codes.h"
 
 #define to_radians(degrees) ((degrees) * M_PI / 180)
 #define to_degrees(radians) ((radians) * 180 / M_PI)
@@ -15,9 +16,11 @@ typedef enum {
     FISH_GENERAL_VELOCITY_FAIL
 } fish_error_code_t;
 
-static fish_t * delete_failed_fish(fish_t * this, fish_error_code_t error_code);
+static fish_t *delete_failed_fish(fish_t *this, fish_error_code_t error_code);
 
-static fish_error_code_t get_fish_error_code(fish_t * this);
+static fish_error_code_t get_fish_error_code(fish_t *this);
+
+static fish_t *initialize_fish_from_config(fish_t *this, config_parser_t *config_parser);
 
 fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period) {
@@ -54,8 +57,56 @@ dimensions, long double initial_translational_velocity, long double wave_amplitu
     }
 }
 
-static fish_t * delete_failed_fish(fish_t * this, fish_error_code_t error_code) {
-    switch(error_code) {
+fish_t *new_fish_from_config(config_parser_t *config_parser) {
+    fish_t *this = new_object(sizeof(fish_t));
+    // TODO ended here
+    initialize_fish_from_config(this, config_parser);
+    return this;
+
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpointer-sign"
+fish_t *initialize_fish_from_config(fish_t *this, config_parser_t *config_parser) {
+    char *xpath = "fish";
+    config_xml_eval_xpath(config_parser, "fish");
+    this->z_motion_phase = ldto_radians(ldrandom_range(0, 360));
+    int max_x = strtoimax(config_xml_get_value_with_xpath(config_parser, "../../display//dimensions/width"),
+            NULL, 10);
+    int max_y = strtoimax(config_xml_get_value_with_xpath(config_parser, "../../display//dimensions/height"),
+            NULL, 10);
+    long double x_0 = ldrandom_range(0, max_x);
+    long double y_0 = ldrandom_range(0, max_y);
+    this->coords = new_cartesian_point(x_0, y_0);
+
+    long double itranslational_v = strtold(config_xml_get_value_with_xpath(config_parser, "translational_motion/initial_translational_velocity"),
+            NULL);
+    long double translational_angle = ldto_radians(ldrandom_range(0, 360));
+    long double v_x = itranslational_v * cosl(translational_angle);
+    long double v_y = itranslational_v * sinl(translational_angle);
+    this->translational_motion = new_translational_motion(x_0, y_0,
+                                                          itranslational_v, translational_angle,
+                                                          translational_angle);
+
+    long double harmonic_angle = translational_angle + M_PI / 2;
+    long double harmonic_amplitude = strtold(config_xml_get_value_with_xpath(config_parser, "harmonic_motion/amplitude"), NULL);
+    long double harmonic_period = strtold(config_xml_get_value_with_xpath(config_parser, "harmonic_motion/period"), NULL);
+    this->harmonic_motion = new_harmonic_motion(harmonic_amplitude, harmonic_period,
+                                                ldto_radians(ldrandom_range(0, 360)),
+                                                harmonic_angle);
+    this->general_velocity = new_cartesian_velocity(0, 0);
+
+    long double ratio = strtold(config_xml_get_value_with_xpath(config_parser, "texture/width_to_height_ratio"), NULL);
+    long double width = strtold(config_xml_get_value_with_xpath(config_parser, "texture/width"), NULL);
+    this->dimensions.w = width;
+    this->dimensions.h = width * ratio;
+    config_xml_eval_xpath(config_parser, "..");
+    return this;
+}
+#pragma clang diagnostic pop
+
+static fish_t *delete_failed_fish(fish_t *this, fish_error_code_t error_code) {
+    switch (error_code) {
         case FISH_NO_MEMORY:
             MEMORY_NOT_ALLOCATED_MESSAGE();
             break;
@@ -77,9 +128,9 @@ static fish_t * delete_failed_fish(fish_t * this, fish_error_code_t error_code) 
     return delete_fish(this);
 }
 
-static fish_error_code_t get_fish_error_code(fish_t * this) {
+static fish_error_code_t get_fish_error_code(fish_t *this) {
     if (is_not_created(this)) return FISH_NO_MEMORY;
-    else if(is_not_created(this->coords)) return FISH_COORDS_FAIL;
+    else if (is_not_created(this->coords)) return FISH_COORDS_FAIL;
     else if (is_not_created(this->translational_motion)) return FISH_TRANSLATIONAL_MOTION_FAIL;
     else if (is_not_created(this->harmonic_motion)) return FISH_HARMONIC_MOTION_FAIL;
     else if (is_not_created(this->general_velocity)) return FISH_GENERAL_VELOCITY_FAIL;
@@ -101,7 +152,7 @@ fish_t *delete_fish(fish_t *this) {
         return delete_object(this);
     } else {
         DELETE_OBJECT_FAILURE(FISH_T_NAME);
-        exit(2);
+        exit(EXIT_FREE_MEMORY_ERROR);
     }
 }
 

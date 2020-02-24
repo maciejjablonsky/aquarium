@@ -4,12 +4,15 @@
 #include "time_handler.h"
 #include "wall.h"
 #include "memory_handling.h"
+#include "exit_codes.h"
 
 typedef enum {
     FISHES_NO_MEMORY, FISHES_FISH_FAIL
 } fishes_error_code_t;
 
-static fishes_t * delete_error_fishes(fishes_t * this, fishes_error_code_t error_code);
+static fishes_t *delete_error_fishes(fishes_t *this, fishes_error_code_t error_code);
+
+fishes_t *initialize_fishes_from_config(fishes_t *this, config_parser_t *config_parser);
 
 fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_fishes) {
     fishes_t *this = new_DL_LIST(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *)) delete_fish);
@@ -30,8 +33,31 @@ fishes_t *new_fishes(fishes_initial_data_t *fish_initial_data, size_t amount_of_
     return this;
 }
 
-static fishes_t * delete_error_fishes(fishes_t * this, fishes_error_code_t error_code) {
-    switch(error_code) {
+fishes_t *new_fishes_from_config(config_parser_t *config_parser) {
+    fishes_t *this = new_DL_LIST(sizeof(fish_t), DL_COPY_POINTER, (void *(*)(void *)) delete_fish);
+    if (is_not_created(this)) {
+        return delete_error_fishes(this, FISHES_NO_MEMORY);
+    }
+    initialize_fishes_from_config(this, config_parser);
+    return this;
+}
+
+fishes_t *initialize_fishes_from_config(fishes_t *this, config_parser_t *config_parser) {
+    char *xpath = "fishes";
+    config_xml_eval_xpath(config_parser, xpath);
+    xpath = "number_of_fishes";
+    xmlChar *value = config_xml_get_value_with_xpath(config_parser, xpath);
+    size_t number_of_fishes = strtoul(value, NULL, 10);
+    for (size_t i = 0; i < number_of_fishes; ++i) {
+        fish_t *fish = new_fish_from_config(config_parser);
+        DL_LIST_add_item(this, fish);
+    }
+    config_xml_eval_xpath(config_parser, "..");
+    return this;
+}
+
+static fishes_t *delete_error_fishes(fishes_t *this, fishes_error_code_t error_code) {
+    switch (error_code) {
         case FISHES_NO_MEMORY:
             MEMORY_NOT_ALLOCATED_MESSAGE();
             break;
@@ -45,7 +71,7 @@ static fishes_t * delete_error_fishes(fishes_t * this, fishes_error_code_t error
 }
 
 void move_each_fish_in_aquarium(fishes_t *fishes, time_handler_t *clock, cartesian_point_t aquarium_dimensions) {
-    fish_t * fish = NULL;
+    fish_t *fish = NULL;
     dl_list_foreach(fishes, fish) {
         update_delta_general_velocity(fish, clock);
         wall_t wall_to_hit = which_wall_is_going_to_hit(fish, &aquarium_dimensions);
@@ -60,19 +86,20 @@ fishes_t *delete_fishes(fishes_t *this) {
     if (is_not_created(this)) {
         return NULL;
     }
-    void * ret = delete_DL_LIST(this);
+    void *ret = delete_DL_LIST(this);
     if (is_deleted(ret)) {
         return NULL;
     } else {
         DELETE_OBJECT_FAILURE(FISHES_T_NAME);
-        exit(2);
+        exit(EXIT_FREE_MEMORY_ERROR);
     }
 }
 
 void multiply_fishes_velocity(fishes_t *this, long double multiplier) {
-    for (size_t i = 0; i < DL_LIST_size(this); ++i)
-    {
+    for (size_t i = 0; i < DL_LIST_size(this); ++i) {
         fish_t *fish = DL_LIST_item_at(this, i);
         multiply_fish_translational_velocity(fish, multiplier);
     }
 }
+
+

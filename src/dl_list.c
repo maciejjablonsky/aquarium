@@ -1,6 +1,7 @@
 #include "dl_list.h"
 #include "object.h"
 #include "memory_handling.h"
+#include "exit_codes.h"
 #include <stdlib.h>
 #include <memory.h>
 #include <assert.h>
@@ -66,7 +67,7 @@ dl_node_t *dl_list_create_node(void *const item, const size_t item_size, const d
             if (is_created(new_node->item)) {
                 memcpy(new_node->item, item, item_size);
             } else {
-                exit(1);
+                exit(EXIT_NO_MEMORY);
             }
     }
     new_node->next = new_node->prev = NULL;
@@ -182,7 +183,7 @@ dl_list_t *delete_DL_LIST(dl_list_t *list) {
         while (list->size != 0) {
             if (!DL_LIST_delete_item_at(list, 0)) {
                 DELETE_OBJECT_FAILURE(DL_LIST_T_NAME);
-                exit(2);
+                exit(EXIT_FREE_MEMORY_ERROR);
             }
         }
         free(list);

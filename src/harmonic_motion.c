@@ -2,6 +2,7 @@
 #include "harmonic_motion.h"
 #include "harmonic_velocity.h"
 #include "memory_handling.h"
+#include "exit_codes.h"
 #include <math.h>
 
 typedef enum {
@@ -84,7 +85,7 @@ harmonic_motion_t *delete_harmonic_motion(harmonic_motion_t *this) {
         return delete_object(this);
     } else {
         DELETE_OBJECT_FAILURE(HARMONIC_MOTION_T_NAME);
-        exit(2);
+        exit(EXIT_FREE_MEMORY_ERROR);
     }
 }
 

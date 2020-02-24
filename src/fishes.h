@@ -7,6 +7,8 @@
 #include "dl_list.h"
 #include "time_handler.h"
 #include "cartesian_point.h"
+#include <libxml/tree.h>
+#include "config_parser/config_parser.h"
 
 typedef struct {
     SDL_Rect fish_dimensions;
@@ -29,6 +31,8 @@ fishes_t * delete_fishes(fishes_t * this);
 void multiply_fishes_velocity(fishes_t * this, long double multiplier);
 
 void move_each_fish_in_aquarium(fishes_t *fishes, time_handler_t *clock, cartesian_point_t aquarium_dimensions);
+
+fishes_t * new_fishes_from_config(config_parser_t *config_parser);
 
 
 #endif //AQUARIUM_FISHES_H

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DEBUG=$1
+SOURCES=$(find src -name '*.[c,h]')
 
-gcc $DEBUG -o aquarium src/*.{c,h} -lSDL2 -lSDL2_image -lm 
+gcc $DEBUG -o aquarium $SOURCES -I/usr/include/libxml -lxml2 -lSDL2 -lSDL2_image -lm 
 

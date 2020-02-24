@@ -1,12 +1,10 @@
 #!/bin/bash
 INIT=$(pwd)
 mkdir -p build
-rm -r build/*
 cd build
 cmake ..
-mkdir -p bin
 make
-mv test_* bin
+clear
 
 red=$'\e[1;31m'
 grn=$'\e[1;32m'
@@ -19,15 +17,16 @@ end=$'\e[0m'
 PASSED=0
 ALL=0
 FAILED_TESTS=""
-printf "\n"
 cd "$INIT"
-for FILE in build/bin/* ; do
-    printf "${yel} Running: $(echo ${FILE} | sed 's#.*/##g') ${end}\n"
+FILES=$(find build -name 'test_*.out')
+for FILE in $FILES ; do
+    FILENAME=$(echo ${FILE}  | sed 's#build/##' | sed 's#test_##' | sed 's#.out##')
+    printf "${yel} Running: $FILENAME ${end}\n"
     ./"$FILE"
     if (( $? == 0 ))  ; then
         PASSED=$((PASSED + 1))
     else
-        FAILED_TESTS="${FAILED_TESTS} ${red}- $(echo ${FILE} | sed 's#.*/##g')${end}\n"
+        FAILED_TESTS="${FAILED_TESTS} ${red}- $(echo ${FILENAME})${end}\n"
     fi
     ALL=$((ALL + 1))
 done

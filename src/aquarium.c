@@ -3,7 +3,7 @@
 #include "object.h"
 #include "cartesian_point.h"
 #include "memory_handling.h"
-
+#include "exit_codes.h"
 typedef enum {
     AQUARIUM_NO_MEMORY, AQUARIUM_FISHES_FAIL, AQUARIUM_DISPLAY_FAIL, AQUARIUM_CLOCK_FAIL
 } aquarium_error_code_t;
@@ -13,7 +13,7 @@ static aquarium_t *delete_failed_aquarium(aquarium_t *this, aquarium_error_code_
 
 aquarium_error_code_t get_aquarium_error_code(aquarium_t *this);
 
-static aquarium_t * initialize_aquarium_from_config(aquarium_t *this, xmlNode *parent_node);
+static aquarium_t *initialize_aquarium_from_config(aquarium_t *this, config_parser_t *config_parser);
 
 aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
                          size_t amount_of_fishes) {
@@ -33,12 +33,12 @@ aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_in
     }
 }
 
-aquarium_t *new_aquarium_from_config(xmlNode *parent_node) {
+aquarium_t *new_aquarium_from_config(config_parser_t *config_parser) {
     aquarium_t *this = new_object(sizeof(aquarium_t));
     if (is_not_created(this)) {
         return delete_failed_aquarium(this, AQUARIUM_NO_MEMORY);
     }
-    this = initialize_aquarium_from_config(this, parent_node);
+    initialize_aquarium_from_config(this, config_parser);
     if (IS_ALL_CREATED(this->fishes, this->display, this->clock)) {
         return this;
     } else {
@@ -46,11 +46,12 @@ aquarium_t *new_aquarium_from_config(xmlNode *parent_node) {
     }
 }
 
-aquarium_t * initialize_aquarium_from_config(aquarium_t *this, xmlNode *parent_node) {
-    this->fishes = new_fishes_from_config(get_config_xml_named_child(parent_node, (const xmlChar*)"fishes"));
-    this->display = new_display_from_config(get_config_xml_named_child(parent_node, (const xmlChar *)"display"));
+aquarium_t *initialize_aquarium_from_config(aquarium_t *this, config_parser_t *config_parser) {
+    this->fishes = new_fishes_from_config(config_parser);
     this->clock = new_time_handler();
     this->action = false;
+    this->display = new_display_from_config(config_parser);
+    return this;
 }
 
 static aquarium_t *delete_failed_aquarium(aquarium_t *this, aquarium_error_code_t error_code) {
@@ -82,7 +83,6 @@ aquarium_error_code_t get_aquarium_error_code(aquarium_t *this) {
 }
 
 
-
 aquarium_t *delete_aquarium(aquarium_t *this) {
     if (is_not_created(this)) {
         return NULL;
@@ -94,7 +94,7 @@ aquarium_t *delete_aquarium(aquarium_t *this) {
         return delete_object(this);
     } else {
         DELETE_OBJECT_FAILURE(AQUARIUM_T_NAME);
-        exit(2);
+        exit(EXIT_FREE_MEMORY_ERROR);
     }
 }
 

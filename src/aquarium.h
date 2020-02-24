@@ -8,6 +8,9 @@
 #include <SDL2/SDL_events.h>
 #include <libxml/tree.h>
 
+#define AQUARIUM_XML_NODE TO_XML_STRING("aquarium")
+
+
 typedef struct  {
     display_t * display;
     fishes_t * fishes;
@@ -18,7 +21,7 @@ typedef struct  {
 
 aquarium_t *new_aquarium(display_initial_data_t *display_initial_data, fishes_initial_data_t *fish_initial_data,
                          size_t amount_of_fishes);
-aquarium_t *new_aquarium_from_config(xmlNode *parent_node);
+aquarium_t *new_aquarium_from_config(config_parser_t *config_parser);
 aquarium_t * delete_aquarium(aquarium_t * this);
 
 void run_aquarium(aquarium_t * aquarium);

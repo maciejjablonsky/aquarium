@@ -1,12 +1,18 @@
 #include "object.h"
 #include <stddef.h>
 #include "memory_handling.h"
+#include "exit_codes.h"
 #include <stdarg.h>
 #include <stdint.h>
 
 
 void *new_object(size_t size) {
-    return malloc(size);
+    void * mem = malloc(size);
+    if (mem) {
+        return mem;
+    }
+    IMPLICIT_ERROR_MESSAGE("Failed to allocate memory for object of size %lu bytes.", size);
+    exit(EXIT_NO_MEMORY);
 }
 void *delete_object(void *object) {
     if (is_created(object)) {

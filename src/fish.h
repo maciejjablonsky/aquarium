@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include "config_parser/config_parser.h"
 #include "cartesian_point.h"
 #include "cartesian_velocity.h"
 #include "polar_velocity.h"
@@ -24,6 +25,8 @@ typedef struct fish {
 
 fish_t *new_fish(size_t max_x, size_t max_y, SDL_Rect
 dimensions, long double initial_translational_velocity, long double wave_amplitude, long double wave_period);
+
+fish_t * new_fish_from_config(config_parser_t * config_parser);
 
 fish_t *delete_fish(fish_t *this);
 

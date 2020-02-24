@@ -2,6 +2,7 @@
 #include "translational_motion.h"
 #include "object.h"
 #include "memory_handling.h"
+#include "exit_codes.h"
 #include <math.h>
 
 typedef enum {
@@ -75,7 +76,7 @@ translational_motion_t *delete_translational_motion(translational_motion_t *this
         return delete_object(this);
     } else {
         DELETE_OBJECT_FAILURE(TRANSLATIONAL_MOTION_T_NAME);
-        exit(2);
+        exit(EXIT_FREE_MEMORY_ERROR);
     }
 }
 
