@@ -1,7 +1,7 @@
 #include <time.h>
 #include <SDL2/SDL.h>
 #include "aquarium.h"
-#include "graphics_paths.h"
+#include "display/graphics_paths.h"
 #include "object.h"
 #include "exit_codes.h"
 

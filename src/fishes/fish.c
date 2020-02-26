@@ -8,9 +8,6 @@
 #include <math.h>
 #include "exit_codes.h"
 
-#define to_radians(degrees) ((degrees) * M_PI / 180)
-#define to_degrees(radians) ((radians) * 180 / M_PI)
-
 typedef enum {
     FISH_NO_MEMORY, FISH_COORDS_FAIL, FISH_TRANSLATIONAL_MOTION_FAIL, FISH_HARMONIC_MOTION_FAIL,
     FISH_GENERAL_VELOCITY_FAIL

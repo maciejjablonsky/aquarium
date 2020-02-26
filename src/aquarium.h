@@ -1,7 +1,7 @@
 #ifndef AQUARIUM_AQUARIUM_H
 #define AQUARIUM_AQUARIUM_H
-#include "display.h"
-#include "fishes.h"
+#include "display/display.h"
+#include "fishes/fishes.h"
 #include "time_handler.h"
 #include "config_parser/config_parser.h"
 #include <SDL2/SDL_rect.h>

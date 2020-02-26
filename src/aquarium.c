@@ -1,7 +1,7 @@
 #include <SDL2/SDL_events.h>
 #include "aquarium.h"
 #include "object.h"
-#include "cartesian_point.h"
+#include "motion/cartesian_point.h"
 #include "memory_handling.h"
 #include "exit_codes.h"
 typedef enum {
