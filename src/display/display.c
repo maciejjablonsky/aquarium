@@ -1,7 +1,7 @@
 #include <SDL2/SDL_image.h>
 #include "display.h"
 #include "object.h"
-#include "fish.h"
+#include "fishes/fish.h"
 #include "memory_handling.h"
 #include "exit_codes.h"
 

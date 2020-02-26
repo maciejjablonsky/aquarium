@@ -5,7 +5,7 @@
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_render.h>
 #include "config_parser/config_parser.h"
-#include "fishes.h"
+#include "fishes/fishes.h"
 
 #define DISPLAY_XML_NODE    TO_XML_STRING("display")
 #define WINDOW_XML_NODE     TO_XML_STRING("window")

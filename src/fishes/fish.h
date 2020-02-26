@@ -5,13 +5,13 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include "config_parser/config_parser.h"
-#include "cartesian_point.h"
-#include "cartesian_velocity.h"
-#include "polar_velocity.h"
-#include "harmonic_motion.h"
+#include "motion/cartesian_point.h"
+#include "motion/cartesian_velocity.h"
+#include "motion/polar_velocity.h"
+#include "motion/harmonic_motion.h"
 #include "time_handler.h"
 #include "wall.h"
-#include "translational_motion.h"
+#include "motion/translational_motion.h"
 
 typedef struct fish {
     cartesian_velocity_t * general_velocity;

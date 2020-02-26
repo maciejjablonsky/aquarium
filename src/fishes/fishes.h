@@ -6,7 +6,7 @@
 #include <SDL2/SDL_rect.h>
 #include "dl_list.h"
 #include "time_handler.h"
-#include "cartesian_point.h"
+#include "motion/cartesian_point.h"
 #include <libxml/tree.h>
 #include "config_parser/config_parser.h"
 
